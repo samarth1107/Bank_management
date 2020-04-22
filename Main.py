@@ -70,12 +70,15 @@ def account():
 @login_required
 def debit():
     form = DebitForm()
+    curr_user_bank_detail=request_User_bank_detail(current_user.id)
+
     if form.validate_on_submit():
-        if form.Account_number.data=='ACC-101':
+        if form.Account_number.data!=curr_user_bank_detail[3] and Does_user_exist(form.Account_number.data):
+            print("Transaction successful")
             return redirect(url_for('home'))
         else :
             flash('Login Unsuccessful. Please check username and password', 'danger')
-    return render_template('debit.html', title='Debit', form=form)
+    return render_template('debit.html', title='Debit', form=form, bank_detail=curr_user_bank_detail)
 
 @app.route("/summary")
 @login_required

@@ -55,6 +55,21 @@ def request_User_detail_small(id):
     user_info=list(itertools.chain(*user_info))
     return user_info
 
+def request_User_bank_detail(id):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT bank_id,account_no,account_balance,account_pin FROM bank.customer_bank_details WHERE Customer_id = %s;",[int(id)])
+    bank_detail = (cur.fetchall())
+    bank_detail=list(itertools.chain(*bank_detail))
+    return bank_detail
+
+def Does_user_exist(acc_no):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT bank_id,account_no,account_balance,account_pin FROM bank.customer_bank_details WHERE Customer_id = %s;",[(acc_no)])
+    bank_detail = (cur.fetchall())
+    if (len(bank_detail)>0):return True
+    else: return False
+    
+
 def request_User_summary(id):
     cur = mysql.connection.cursor()
     cur.execute("SELECT * FROM bank.customer_account_summary WHERE Customer_id = %s;",[int(id)])

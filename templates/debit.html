@@ -2,6 +2,18 @@
 {% block content %}
 
 <div class="content-section">
+
+    <div class='row'>
+        <div class='col-md-12 m-1 border rounded'>
+            <div class="p-4">         
+                <h4>Bank Details</h4>
+                <p>Bank_id : {{bank_detail[0]}}</p>
+                <p>Account Number : {{bank_detail[1]}}</p>
+                <p>Account Balance: {{bank_detail[2]}}</p>
+            </div>
+        </div>
+    </div>
+
     <form method="POST" action="">
         {{ form.hidden_tag() }}
         <fieldset class="form-group">
