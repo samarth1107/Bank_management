@@ -22,11 +22,13 @@ with app.app_context():
 class User(UserMixin):
 
     def __repr__(self):
-        return f"User('{self.id}', '{self.email}', '{self.password}')"
+        return f"User('{self.id}', '{self.email}', '{self.password}', '{self.name}')"
 
     def __init__(self, id):
         self.id = id
         self.email = dbemails[dbcustomer_id.index(int(id))]
+        all_user_data = request_User_detail_small(id)
+        self.name = all_user_data[1]
 
 def request_User_detail(id):
     cur = mysql.connection.cursor()
@@ -57,7 +59,7 @@ def request_User_detail_small(id):
 
 def request_User_bank_detail(id):
     cur = mysql.connection.cursor()
-    cur.execute("SELECT bank_id,account_no,account_balance,account_pin FROM bank.customer_bank_details WHERE Customer_id = %s;",[int(id)])
+    cur.execute("SELECT bank_id,bank_name,account_no,account_balance,account_pin FROM bank.customer_bank_details WHERE Customer_id = %s;",[int(id)])
     bank_detail = (cur.fetchall())
     bank_detail=list(itertools.chain(*bank_detail))
     return bank_detail

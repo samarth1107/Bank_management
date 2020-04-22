@@ -4,24 +4,22 @@
 <div class="container">
     
         <div class="row">
-            <div class="col-md-12 m-1 p-4 border rounded">
+            <div class="col-md-12 m-1 p-4 border rounded bg-gradient-dark">
                 <h3>Account section</h3>
-                <h1 class="account-heading">{{user_data[1]}}</h1>
-                <h3>ID {{user_data[0]}}</h3>
+                <h1 class="account-heading">{{user_name}}</h1>
+                <h3>ID {{user_id}}</h3>
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-md-12 m-1 p-4 border rounded">
-                <h4>Personal details</h4>
-                <p>Email : {{user_data[2]}}</p>
-                <p>Address : {{user_data[3]}}, {{user_data[4]}}, {{user_data[5]}}, {{user_data[6]}}</p>
-                <p>Pin code : {{user_data[7]}}</p>
-                <p>Age : {{user_data[8]}}</p>
-                <p>Gender : {{user_data[9]}}</p>
-                <p>Date of birth : {{user_data[10]}}</p>
-                <p>Father's Name : {{user_data[11]}}</p>
-                <p>Mother's Name : {{user_data[12]}}</p>
+        <div class="row-md m-1">
+            <div class="border rounded">   
+                <div class="p-4">         
+                    <h4>Bank Details</h4>
+                    <p>Bank ID : {{bank_detail[0]}}</p>
+                    <p>Bank Name : {{bank_detail[1]}}</p>
+                    <p>Account Number: {{bank_detail[2]}}</p>
+                    <p>Account Balance : {{bank_detail[3]}}</p>
+                </div>
             </div>
         </div>
 
@@ -48,6 +46,34 @@
                 <h4>Balance</h4>
             </div>         
         </div>
+
+        {%for each_statement in summary%}
+            <div class="row m-1 border rounded">
+                <div class="col-md-1  text-center py-3  ">
+                    <p>{{each_statement[1]}}</p>
+                </div>
+                <div class="col-md-1  text-center py-3 pl-1  ">
+                    <p>{{each_statement[2]}}</p>
+                </div>
+                <div class="col-md-2  text-center py-3  ">
+                    <p>{{each_statement[3]}}</p>
+                </div>    
+                <div class="col-md-2  text-center py-3  ">
+                    <p>{{each_statement[4]}}</p>
+                </div> 
+                <div class="col-md-2  text-center py-3  ">
+                    <p>{{each_statement[5]}}</p>
+                </div> 
+                <div class="col-md-2  text-center py-3  ">
+                    <p>{{each_statement[6]}}</p>
+                </div> 
+                <div class="col-md-2  text-center py-3  ">
+                    <p>{{each_statement[7]}}</p>
+                </div>         
+            </div>
+        {% endfor %}
+
+            
 </div>
 
 <div class="border-top pt-3">

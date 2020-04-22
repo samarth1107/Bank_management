@@ -73,7 +73,7 @@ def debit():
     curr_user_bank_detail=request_User_bank_detail(current_user.id)
 
     if form.validate_on_submit():
-        if form.Account_number.data!=curr_user_bank_detail[3] and Does_user_exist(form.Account_number.data):
+        if form.Account_number.data!=curr_user_bank_detail[2] and Does_user_exist(form.Account_number.data):
             print("Transaction successful")
             return redirect(url_for('home'))
         else :
@@ -84,7 +84,12 @@ def debit():
 @login_required
 def summary():
     summary = load_data.request_User_summary(current_user.id)
-    return render_template('summary.html', title='Summary', user_data=load_data.request_User_detail_small(current_user.id))
+    return render_template('summary.html', 
+                            title='Summary',
+                            user_id=current_user.id,
+                            user_name=current_user.name,
+                            bank_detail=load_data.request_User_bank_detail(current_user.id), 
+                            summary=summary)
 
 if __name__ == '__main__':
     app.run(debug=True)
