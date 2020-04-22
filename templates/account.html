@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="col">
+    <div class="row-md m-1 p-4 border rounded">
+        <h3>Account section</h3>
+        <h1 class="account-heading">{{user_data[1]}}</h1>
+        <h3>ID {{user_data[0]}}</h3>
+    </div>
+
+    <div class="row-md m-1">
+        <div class="border rounded">   
+            <div class="p-4">         
+                <h4>Personal details</h4>
+                <p>Email : {{user_data[2]}}</p>
+                <p>Address : {{user_data[3]}}, {{user_data[4]}}, {{user_data[5]}}, {{user_data[6]}}</p>
+                <p>Pin code : {{user_data[7]}}</p>
+                <p>Age : {{user_data[8]}}</p>
+                <p>Gender : {{user_data[9]}}</p>
+                <p>Date of birth : {{user_data[10]}}</p>
+                <p>Father's Name : {{user_data[11]}}</p>
+                <p>Mother's Name : {{user_data[12]}}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row-md m-1">
+        <div class="border rounded">   
+            <div class="p-4">         
+                <h4>Bank Details</h4>
+                <p>Bank_id : {{bank_detail[1]}}</p>
+                <p>Bank Name : {{bank_detail[2]}}</p>
+                <p>Account Number: {{bank_detail[3]}}</p>
+                <p>Account Balance : {{bank_detail[4]}}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row-md m-1">
+        <div class="border rounded">   
+            <div class="p-4">         
+                <h4>Employment Details</h4>
+                <p>Company ID : {{employee_detail[1]}}</p>
+                <p>Sector : {{employee_detail[2]}}</p>
+                <p>Product Type : {{employee_detail[3]}}</p>
+                <p>Company Name : {{employee_detail[4]}}</p>
+                <p>Working from : {{employee_detail[5]}}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="border-top pt-3">
+    <small class="text-muted">
+        Your money is in safe hand
+    </small>
+</div>
+{% endblock content %}
