@@ -1,7 +1,7 @@
 from flask import Flask,render_template,url_for,flash,redirect,request
 from flask_mysqldb import MySQL
 from flask_login import LoginManager,login_user,current_user,logout_user,login_required
-from form import LoginForm,DebitForm
+from form import LoginForm, DebitForm, RegisterForm
 from load_data import *
 import load_data
 
@@ -37,6 +37,18 @@ def home():
 def about():
     return render_template('about.html',title="About")
 
+@app.route("/register", methods=['GET', 'POST'])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+
+    form = RegisterForm()
+    if form.validate_on_submit():
+        user_info = [form.name.data, form.email.data, form.houseno.data, form.sector.data, form.city.data, form.state.data, form.pin.data, form.age.data, form.gender.data, form.dob.data, form.father.data, form.mother.data]
+        load_data.insert_user(user_info)
+        flash('Your account has been created! You are now able to log in', 'success')
+    return render_template('register.html', title='Register', form=form)
+
 @app.route("/login", methods=['GET', 'POST'])
 def login():
 
@@ -49,6 +61,7 @@ def login():
         if form.email.data in load_data.dbemails and load_data.dbpasswords[load_data.dbemails.index(form.email.data)]==form.password.data:
             login_user(User(load_data.dbcustomer_id[load_data.dbemails.index(form.email.data)]), remember=True)
             next_page = request.args.get('next')
+            flash('Logged in successfully', 'success')
             return redirect(next_page) if(next_page) else redirect(url_for('home'))
         else:
             flash('Login Unsuccessful. Please check username and password', 'danger')

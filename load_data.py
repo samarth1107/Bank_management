@@ -77,3 +77,13 @@ def request_User_summary(id):
     cur.execute("SELECT * FROM bank.customer_account_summary WHERE Customer_id = %s;",[int(id)])
     user_summary = list(map(list,cur.fetchall()))
     return user_summary
+
+
+def insert_user(user_detail):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT MAX(CUSTOMER_ID) FROM bank.customer_personal_detail")
+    id_val = map(lambda x: x[0], (cur.fetchall()))
+    id_val = str(list(id_val)[0]+1)
+    cur.execute("INSERT INTO bank.customer_personal_detail VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", [id_val, user_detail[0], user_detail[1], user_detail[2], user_detail[3], user_detail[4], user_detail[5], user_detail[6], user_detail[7], user_detail[8], user_detail[9], user_detail[10], user_detail[11]])
+    mysql.connection.commit()
+    cur.close()
