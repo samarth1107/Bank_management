@@ -4,7 +4,7 @@
 <div class="container">
     
         <div class="row">
-            <div class="col-md-12 m-1 p-4 border rounded bg-gradient-dark">
+            <div class="col-md-12 m-1 p-4 round_border bg-light">
                 <h3>Account section</h3>
                 <h1 class="account-heading">{{user_name}}</h1>
                 <h3>ID {{user_id}}</h3>
@@ -12,7 +12,7 @@
         </div>
 
         <div class="row-md m-1">
-            <div class="border rounded">   
+            <div class="round_border bg-light">   
                 <div class="p-4">         
                     <h4>Bank Details</h4>
                     <p>Bank ID : {{bank_detail[0]}}</p>
@@ -23,7 +23,7 @@
             </div>
         </div>
 
-        <div class="row m-1">
+        <div class="row round_border bg-light">
             <div class="col-md-1  text-center py-3 border rounded">
                 <h4>S.</h4>
             </div>
@@ -48,7 +48,7 @@
         </div>
 
         {%for each_statement in summary%}
-            <div class="row m-1 border rounded">
+            <div class="row m-1 round_border_small bg-light">
                 <div class="col-md-1  text-center py-3  ">
                     <p>{{each_statement[1]}}</p>
                 </div>
@@ -74,11 +74,5 @@
         {% endfor %}
 
             
-</div>
-
-<div class="border-top pt-3">
-    <small class="text-muted">
-        Your money is in safe hand
-    </small>
 </div>
 {% endblock content %}

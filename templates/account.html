@@ -1,13 +1,13 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="col">
-    <div class="row-md m-1 p-4 border rounded bg-light">
+<div class="row-fluid">
+    <div class="span12 m-1 p-4 round_border bg-light">
         <h3>Account section</h3>
         <h1 class="account-heading">{{user_data[1]}}</h1>
         <h3>ID {{user_data[0]}}</h3>
     </div>
 
-    <div class="row-md m-1 bg-light">
+    <div class="span12 m-1 round_border bg-light">
         <div class="border rounded">   
             <div class="p-4">         
                 <h4>Personal details</h4>
@@ -23,7 +23,7 @@
         </div>
     </div>
 
-    <div class="row-md m-1 bg-light">
+    <div class="span12 m-1 round_border bg-light">
         <div class="border rounded">   
             <div class="p-4">         
                 <h4>Bank Details</h4>
@@ -35,7 +35,7 @@
         </div>
     </div>
 
-    <div class="row-md m-1 bg-light">
+    <div class="span12 m-1 round_border bg-light">
         <div class="border rounded">   
             <div class="p-4">         
                 <h4>Employment Details</h4>
@@ -47,11 +47,5 @@
             </div>
         </div>
     </div>
-</div>
-
-<div class="border-top pt-3">
-    <small class="text-muted">
-        Your money is in safe hand
-    </small>
 </div>
 {% endblock content %}

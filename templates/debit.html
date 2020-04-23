@@ -3,8 +3,8 @@
 
 <div class="content-section">
 
-    <div class='row'>
-        <div class='col-md-12 m-1 border rounded'>
+    <div class='row round_border bg-light m-1'>
+        <div class='col-md-12 m-1'>
             <div class="p-4">         
                 <h4>Bank Details</h4>
                 <p>Bank_id : {{bank_detail[0]}}</p>
@@ -14,7 +14,7 @@
         </div>
     </div>
 
-    <form method="POST" action="">
+    <form method="POST" action="" class="round_border bg-light p-3">
         {{ form.hidden_tag() }}
         <fieldset class="form-group">
             <legend class="border-bottom mb-4">Transfer Money</legend>
@@ -55,9 +55,4 @@
     </form>
 </div>
 
-    <div class="border-top pt-3">
-        <small class="text-muted">
-            Your money is in safe hand
-        </small>
-    </div>
 {% endblock content %}
