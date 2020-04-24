@@ -89,7 +89,6 @@ def make_transaction(acc_from,acc_to,amount):
     mysql.connection.commit()
     cur.close()  
 
-
 def update_user_summary(account_no,amount,status,company):
     cur = mysql.connection.cursor()
 
@@ -111,8 +110,9 @@ def request_User_summary(id):
     cur = mysql.connection.cursor()
     cur.execute("SELECT * FROM bank.customer_account_summary WHERE Customer_id = %s;",[int(id)])
     user_summary = list(map(list,cur.fetchall()))
-    return user_summary
     cur.close()
+    return user_summary
+    
 
 def insert_user(user_detail):
     cur = mysql.connection.cursor()
@@ -122,3 +122,19 @@ def insert_user(user_detail):
     cur.execute("INSERT INTO bank.customer_personal_detail VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", [id_val, user_detail[0], user_detail[1], user_detail[2], user_detail[3], user_detail[4], user_detail[5], user_detail[6], user_detail[7], user_detail[8], user_detail[9], user_detail[10], user_detail[11]])
     mysql.connection.commit()
     cur.close()
+
+def enquire_loan(type,principal,period):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM bank.bank_loan_detail WHERE loan_type=%s AND max_period>%s;",[str(type),int(period)])
+    loan_details = list(map(list,cur.fetchall()))
+    cur.close()
+    if len(loan_details)>0:
+        EMI = []
+        for loan in loan_details:
+            interest = round((principal*loan[3]*period)/100,2)
+            total_amount=round(principal+interest,2)
+            emi = round(total_amount/period,2)
+            EMI.append([interest,total_amount,emi])
+        return loan_details,EMI
+    else: return False,False
+    

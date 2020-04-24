@@ -117,7 +117,13 @@ def summary():
 def loan_enquire():
     form = Loan_enquiryForm()
     if form.validate_on_submit():
-        flash('Enquiry successful','success')
+        loan_data,emi_data=enquire_loan(form.loan_type.data,form.principal.data,form.max_period.data)
+        if loan_data!=False:
+            print("hi")
+            print(loan_data)
+            return render_template('loan_enquire_result.html', title='Loan Enquiry', loan_data=loan_data, emi_data=emi_data,loop=range(len(loan_data)) , loan_type=form.loan_type.data, principal=int(form.principal.data))
+        else:
+            flash('No Loan available for your requirement','success')
     return render_template('loan_enquire.html', title='Loan Enquiry', form=form) 
 
 if __name__ == '__main__':
