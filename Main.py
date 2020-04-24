@@ -1,7 +1,7 @@
 from flask import Flask,render_template,url_for,flash,redirect,request
 from flask_mysqldb import MySQL
 from flask_login import LoginManager,login_user,current_user,logout_user,login_required
-from form import LoginForm, DebitForm, RegisterForm
+from form import LoginForm, DebitForm, RegisterForm, Loan_enquiryForm
 from load_data import *
 import load_data
 
@@ -86,11 +86,19 @@ def debit():
     curr_user_bank_detail=request_User_bank_detail(current_user.id)
 
     if form.validate_on_submit():
-        if form.Account_number.data!=curr_user_bank_detail[2] and Does_user_exist(form.Account_number.data):
-            print("Transaction successful")
-            return redirect(url_for('home'))
+        if form.Account_number.data!=current_user.account_no and int(form.Pin.data)==current_user.PIN:
+            if int(form.Amount.data)<current_user.balance:
+                if Does_user_exist(form.Account_number.data):
+                    amount=float(form.Amount.data)
+                    make_transaction(current_user.account_no,form.Account_number.data,amount)
+                    flash('Trasaction successful', 'success')
+                    return redirect(url_for('home'))
+                else:
+                    flash('Please enter valid Account number','danger')
+            else:
+                flash('Amount Cannot be more than balance','danger')
         else :
-            flash('Login Unsuccessful. Please check username and password', 'danger')
+            flash('Please check your account number and PIN code', 'danger')
     return render_template('debit.html', title='Debit', form=form, bank_detail=curr_user_bank_detail)
 
 @app.route("/summary")
@@ -103,6 +111,14 @@ def summary():
                             user_name=current_user.name,
                             bank_detail=load_data.request_User_bank_detail(current_user.id), 
                             summary=summary)
+
+@app.route("/loan_enquire", methods=['GET', 'POST'])
+@login_required
+def loan_enquire():
+    form = Loan_enquiryForm()
+    if form.validate_on_submit():
+        flash('Enquiry successful','success')
+    return render_template('loan_enquire.html', title='Loan Enquiry', form=form) 
 
 if __name__ == '__main__':
     app.run(debug=True)
