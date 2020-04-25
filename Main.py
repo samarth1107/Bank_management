@@ -1,7 +1,7 @@
 from flask import Flask,render_template,url_for,flash,redirect,request
 from flask_mysqldb import MySQL
 from flask_login import LoginManager,login_user,current_user,logout_user,login_required
-from form import LoginForm, DebitForm, RegisterForm, Loan_enquiryForm
+from form import LoginForm, DebitForm, RegisterForm, Loan_enquiryForm, Bank_LoginForm
 from load_data import *
 import load_data
 
@@ -9,10 +9,11 @@ import load_data
 app = Flask(__name__ ,template_folder='templates' , static_folder='static')
 app.config['SECRET_KEY'] = '5791628bpowerb0b13ce0c676dfde280ba245'
 
-app.config['MYSQL_HOST']='localhost'
+app.config['MYSQL_HOST']='10.0.0.7'
 app.config['MYSQL_USER']='root'
 app.config['MYSQL_PASSWORD']='1107'
 app.config['MYSQL_DB']='bank'
+app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 mysql = MySQL(app)
 
@@ -49,7 +50,7 @@ def register():
         flash('Your account has been created! You are now able to log in', 'success')
     return render_template('register.html', title='Register', form=form)
 
-@app.route("/login", methods=['GET', 'POST'])
+@app.route("/login/user", methods=['GET', 'POST'])
 def login():
 
     if current_user.is_authenticated:
@@ -58,15 +59,35 @@ def login():
     form = LoginForm()
 
     if form.validate_on_submit():
-        if form.email.data in load_data.dbemails and load_data.dbpasswords[load_data.dbemails.index(form.email.data)]==form.password.data:
-            login_user(User(load_data.dbcustomer_id[load_data.dbemails.index(form.email.data)]), remember=True)
+        verify_user=Verify_user(form.email.data,form.password.data)
+        if verify_user!=-1:
+            if form.remember.data:login_user(User(verify_user), remember=True)
+            else:login_user(User(verify_user))
             next_page = request.args.get('next')
             flash('Logged in successfully', 'success')
             return redirect(next_page) if(next_page) else redirect(url_for('home'))
-        else:
-            flash('Login Unsuccessful. Please check username and password', 'danger')
+        else:flash('Login Unsuccessful. Please check username and password', 'danger')
 
-    return render_template('sign_up.html', title='Login', form=form)
+    return render_template('sign_in.html', title='Login', form=form)
+
+@app.route("/login/bank", methods=['GET', 'POST'])
+def bank_login():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+
+    form = Bank_LoginForm()
+
+    if form.validate_on_submit():
+        verify_banker=Verify_banker(form.bank_id.data,form.branch_id.data,form.password.data)
+        if verify_banker!=-1:
+            if form.remember.data:login_user(Bank(verify_banker), remember=True)
+            else:login_user(Bank(verify_banker))
+            next_page = request.args.get('next')
+            flash('Logged in successfully', 'success')
+            return redirect(next_page) if(next_page) else redirect(url_for('home'))
+        else:flash('Login Unsuccessful. Please check username and password', 'danger')
+
+    return render_template('bank_sign_in.html', title='Login', form=form)
 
 @app.route("/logout")
 def logout():
@@ -77,6 +98,9 @@ def logout():
 @login_required
 def account():
     user_data,bank_detail,employee_detail=load_data.request_User_detail(current_user.id)
+    user_data=list(user_data.values())
+    bank_detail=list(bank_detail.values())
+    employee_detail=list(employee_detail.values())
     return render_template('account.html', title="Account",user_data=user_data,bank_detail=bank_detail,employee_detail=employee_detail)
 
 @app.route("/debit", methods=['GET', 'POST'])
@@ -99,18 +123,23 @@ def debit():
                 flash('Amount Cannot be more than balance','danger')
         else :
             flash('Please check your account number and PIN code', 'danger')
-    return render_template('debit.html', title='Debit', form=form, bank_detail=curr_user_bank_detail)
+    return render_template('debit.html', title='Debit', form=form, bank_detail=list(curr_user_bank_detail.values()))
 
 @app.route("/summary")
 @login_required
 def summary():
     summary = load_data.request_User_summary(current_user.id)
+
+    data = []
+    for entry in summary:
+        data.append(list(entry.values()))
+
     return render_template('summary.html', 
                             title='Summary',
                             user_id=current_user.id,
                             user_name=current_user.name,
-                            bank_detail=load_data.request_User_bank_detail(current_user.id), 
-                            summary=summary)
+                            bank_detail=list(load_data.request_User_bank_detail(current_user.id).values()), 
+                            summary=data)
 
 @app.route("/loan_enquire", methods=['GET', 'POST'])
 @login_required
@@ -119,8 +148,6 @@ def loan_enquire():
     if form.validate_on_submit():
         loan_data,emi_data=enquire_loan(form.loan_type.data,form.principal.data,form.max_period.data)
         if loan_data!=False:
-            print("hi")
-            print(loan_data)
             return render_template('loan_enquire_result.html', title='Loan Enquiry', loan_data=loan_data, emi_data=emi_data,loop=range(len(loan_data)) , loan_type=form.loan_type.data, principal=int(form.principal.data))
         else:
             flash('No Loan available for your requirement','success')

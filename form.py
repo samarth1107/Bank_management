@@ -25,6 +25,13 @@ class LoginForm(FlaskForm):
     remember = BooleanField('Remember Me')
     submit = SubmitField('Login')
 
+class Bank_LoginForm(FlaskForm):
+    bank_id = StringField('BANK ID',validators=[DataRequired(), Regexp(regex=r'^BANK\d{6}$',message="Bank ID should be in the form of BANK100001")])
+    branch_id = StringField('Branch ID',validators=[DataRequired(), Length(min=6,max=6)])
+    password = PasswordField('Password', validators=[DataRequired()])
+    remember = BooleanField('Remember Me', default="unchecked")
+    submit = SubmitField('Login')
+
 class DebitForm(FlaskForm):
     Account_number = StringField('Account Number', validators=[Regexp(regex=r'^ACC-\d{3}$',message="Example Account number ACC-101")])
     Pin = StringField('Pin Number', validators=[Length(min=4, max=4)])
