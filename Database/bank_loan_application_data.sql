@@ -16,29 +16,31 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `startup_funds`
+-- Table structure for table `loan_application_data`
 --
 
-DROP TABLE IF EXISTS `startup_funds`;
+DROP TABLE IF EXISTS `loan_application_data`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `startup_funds` (
-  `fund_id` int NOT NULL,
-  `source_id` varchar(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `value` int NOT NULL,
-  `interest` int NOT NULL,
-  PRIMARY KEY (`fund_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+CREATE TABLE `loan_application_data` (
+  `application_id` int NOT NULL AUTO_INCREMENT,
+  `Loan_id` int NOT NULL,
+  `Customer_id` int NOT NULL,
+  `Status` varchar(45) NOT NULL DEFAULT 'PENDING',
+  PRIMARY KEY (`application_id`),
+  UNIQUE KEY `application_id_UNIQUE` (`application_id`),
+  KEY `loan_id` (`Loan_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1000000008 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `startup_funds`
+-- Dumping data for table `loan_application_data`
 --
 
-LOCK TABLES `startup_funds` WRITE;
-/*!40000 ALTER TABLE `startup_funds` DISABLE KEYS */;
-INSERT INTO `startup_funds` VALUES (100000045,'COMP100003',116485,7),(100000046,'COMP100004',764327,8),(100000047,'COMP100005',181421,6),(100000048,'COMP100006',310669,8),(100000049,'COMP100007',830836,4),(100000050,'COMP100008',932246,4),(100000051,'COMP100009',412305,7),(100000052,'COMP100010',572502,6),(100000053,'COMP100011',97904,5),(100000054,'COMP100012',486000,8),(100000055,'COMP100013',748261,5),(100000056,'COMP100014',292942,8),(100000057,'COMP100002',730599,7),(100000058,'COMP100003',676858,7),(100000059,'COMP100004',501291,7),(100000060,'COMP100005',183414,8),(100000061,'COMP100006',136802,7),(100000062,'COMP100007',277134,5),(100000063,'COMP100008',305431,7),(100000064,'COMP100009',401039,7);
-/*!40000 ALTER TABLE `startup_funds` ENABLE KEYS */;
+LOCK TABLES `loan_application_data` WRITE;
+/*!40000 ALTER TABLE `loan_application_data` DISABLE KEYS */;
+INSERT INTO `loan_application_data` VALUES (1000000001,1,1000000001,'ACCEPTED'),(1000000002,4,1000000002,'ACCEPTED'),(1000000003,2,1000000003,'ACCEPTED'),(1000000004,5,1000000004,'ACCEPTED'),(1000000005,2,1000000005,'ACCEPTED'),(1000000006,3,1000000006,'ACCEPTED');
+/*!40000 ALTER TABLE `loan_application_data` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -50,4 +52,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-04-26  5:07:47
+-- Dump completed on 2020-04-26  5:07:42

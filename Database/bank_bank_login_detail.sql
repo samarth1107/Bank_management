@@ -16,29 +16,28 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `startup_funds`
+-- Table structure for table `bank_login_detail`
 --
 
-DROP TABLE IF EXISTS `startup_funds`;
+DROP TABLE IF EXISTS `bank_login_detail`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `startup_funds` (
-  `fund_id` int NOT NULL,
-  `source_id` varchar(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `value` int NOT NULL,
-  `interest` int NOT NULL,
-  PRIMARY KEY (`fund_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+CREATE TABLE `bank_login_detail` (
+  `Bank_id` char(10) NOT NULL,
+  `Branch_id` int NOT NULL,
+  `password` varchar(45) NOT NULL,
+  PRIMARY KEY (`Bank_id`,`Branch_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `startup_funds`
+-- Dumping data for table `bank_login_detail`
 --
 
-LOCK TABLES `startup_funds` WRITE;
-/*!40000 ALTER TABLE `startup_funds` DISABLE KEYS */;
-INSERT INTO `startup_funds` VALUES (100000045,'COMP100003',116485,7),(100000046,'COMP100004',764327,8),(100000047,'COMP100005',181421,6),(100000048,'COMP100006',310669,8),(100000049,'COMP100007',830836,4),(100000050,'COMP100008',932246,4),(100000051,'COMP100009',412305,7),(100000052,'COMP100010',572502,6),(100000053,'COMP100011',97904,5),(100000054,'COMP100012',486000,8),(100000055,'COMP100013',748261,5),(100000056,'COMP100014',292942,8),(100000057,'COMP100002',730599,7),(100000058,'COMP100003',676858,7),(100000059,'COMP100004',501291,7),(100000060,'COMP100005',183414,8),(100000061,'COMP100006',136802,7),(100000062,'COMP100007',277134,5),(100000063,'COMP100008',305431,7),(100000064,'COMP100009',401039,7);
-/*!40000 ALTER TABLE `startup_funds` ENABLE KEYS */;
+LOCK TABLES `bank_login_detail` WRITE;
+/*!40000 ALTER TABLE `bank_login_detail` DISABLE KEYS */;
+INSERT INTO `bank_login_detail` VALUES ('BANK100001',0,'main_1'),('BANK100001',100001,'branch1234'),('BANK100002',0,'main_2'),('BANK100002',100002,'branch1234'),('BANK100003',0,'main_3'),('BANK100003',100003,'branch1234'),('BANK100004',0,'main_4'),('BANK100004',100004,'branch1234'),('BANK100005',0,'main_5'),('BANK100005',100005,'branch1234'),('BANK100006',0,'main_6'),('BANK100006',100006,'branch1234');
+/*!40000 ALTER TABLE `bank_login_detail` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
