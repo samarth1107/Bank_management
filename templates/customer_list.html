@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}" type="text/css">
+
+    <title>Customer Account Summary</title>
+
+</head>
+<body style="background-color: #00000026">
+
+  <header>
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+
+      <a class="navbar-brand" href="{{ url_for('bank_home') }}">{{current_user.name}}</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link active" href="#">Home <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="#">About <span class="sr-only">(current)</span></a>
+          </li>
+        </ul>
+
+        <div class="navbar-nav">
+          <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
+        </div>
+
+        </div> 
+      </div>
+    </nav>
+  </header> 
+
+    <div class="container">
+        <div class="row m-2">
+            <div class="col-12 round_border">
+            <form method="POST" action="" class="bg-light m-2 p-2 rounded">
+                {{ form.hidden_tag() }}
+                <fieldset class="form-group">
+                    <legend class="border-bottom mb-4">Search Customer</legend>
+                    
+                    <div class="form-group">
+                        {{ form.query_type.label(class="form-control-label") }}
+                        {% if form.query_type.errors %}
+                            {{ form.query_type(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.query_type.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.query_type(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.query.label(class="form-control-label") }}
+                        {% if form.query.errors %}
+                            {{ form.query(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.query.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.query(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+
+                </fieldset>
+
+                <div class="form-group">
+                    {{ form.submit(class="btn btn-outline-info") }}
+                </div>
+
+            </form>
+            </div>
+        </div>
+
+        <div class="row">
+            {% if record%}
+            <div class="col-12 round_border bg-light">                
+
+                {% if many_recored %}
+                        <div class="row round_border">
+                            <div class="col-md-2 text-center py-3"><h4>Customer ID</h4></div>
+                            <div class="col-md-2 text-center py-3 vl"><h4>Name</h4></div>
+                            <div class="col-md-2 text-center py-3 vl"><h4>Email ID</h4></div>
+                            <div class="col-md-2 text-center py-3 vl"><h4>Account Number</h4></div>
+                            <div class="col-md-2 text-center py-3 vl"><h4>Account Balance</h4></div>
+                            <div class="col-md-2 text-center py-3 vl"><h4>Account type</h4></div>
+                        </div>
+                    {% for customer in customer_list %}
+                            <div class="row">
+                                <div class="col-md-2 text-left inside"><p>{{customer['customer_id']}}</p></div>
+                                <div class="col-md-2 text-left inside vl"><p>{{customer['name']}}</p></div>
+                                <div class="col-md-2 text-left inside trimText vl"><p>{{customer['email']}}</p></div>
+                                <div class="col-md-2 text-left inside vl"><p>{{customer['account_no']}}</p></div>
+                                <div class="col-md-2 text-left inside vl"><p>{{customer['account_balance']}}</p></div>
+                                <div class="col-md-2 text-left inside vl"><p>{{customer['account_type']}}</p></div>
+                            </div>
+                    {% endfor %}
+
+                {% else %}
+                        <div class="row round_border">
+                            <div class="col-md-12 text-left inside">
+                                <p>ID : {{customer_list['customer_id']}}</p>
+                                <p>Name : {{customer_list['name']}}</p>
+                                <p>Age/Gender : {{customer_list['age']}} / {{customer_list['gender']}}</p>
+                                <p>DOB : {{customer_list['dob']}}</p>
+                                <p>Account Login Email : {{customer_list['email']}}</p>
+                                <p>Account Login password : {{customer_list['password']}}</p>
+                                <p>Account ID : {{customer_list['bank_id']}}</p>
+                                <p>Account Number : {{customer_list['account_no']}}</p>
+                                <p>Account Balance : {{customer_list['account_balance']}}</p>
+                                <p>Account type : {{customer_list['account_type']}}</p>
+                                <p>Account PIN : {{customer_list['account_pin']}}</p>
+                                <p>Address :- </p>
+                                <p>{{customer_list['house_no']}} </p>
+                                <p>{{customer_list['sector']}}</p>
+                                <p>{{customer_list['city']}}</p>
+                                <p>{{customer_list['state']}} {{customer_list['pin_code']}}</p>
+                            </div>
+                        </div>
+
+
+                        <div class="row m-2"><h1>Customer transaction statement</h1></div>
+
+                        <div class="row m-1 round_border bg-light">
+                            <div class="col-md-1  text-center py-3 border rounded">
+                                <h4>S.</h4>
+                            </div>
+                            <div class="col-md-1  text-center py-3 pl-1 border rounded">
+                                <h4>D/C</h4>
+                            </div>
+                            <div class="col-md-2  text-center py-3 border rounded">
+                                <h4>Source</h4>
+                            </div>    
+                            <div class="col-md-2  text-center py-3 border rounded">
+                                <h4>Amount</h4>
+                            </div> 
+                            <div class="col-md-2  text-center py-3 border rounded">
+                                <h4>Date</h4>
+                            </div> 
+                            <div class="col-md-2  text-center py-3 border rounded">
+                                <h4>Time</h4>
+                            </div> 
+                            <div class="col-md-2  text-center py-3 border rounded">
+                                <h4>Balance</h4>
+                            </div>         
+                        </div>
+                
+                        {%for each_statement in summary%}
+                            <div class="row m-1 round_border_small bg-light">
+                                <div class="col-md-1  text-center py-3  ">
+                                    <p>{{each_statement[1]}}</p>
+                                </div>
+                                <div class="col-md-1  text-center py-3 pl-1  ">
+                                    <p>{{each_statement[2]}}</p>
+                                </div>
+                                <div class="col-md-2  text-center py-3  ">
+                                    <p>{{each_statement[3]}}</p>
+                                </div>    
+                                <div class="col-md-2  text-center py-3  ">
+                                    <p>{{each_statement[4]}}</p>
+                                </div> 
+                                <div class="col-md-2  text-center py-3  ">
+                                    <p>{{each_statement[5]}}</p>
+                                </div> 
+                                <div class="col-md-2  text-center py-3  ">
+                                    <p>{{each_statement[6]}}</p>
+                                </div> 
+                                <div class="col-md-2  text-center py-3  ">
+                                    <p>{{each_statement[7]}}</p>
+                                </div>         
+                            </div>
+                        {% endfor %}
+                {% endif %}
+
+            </div>
+            {% else %}
+            <div class="col-12 round_border">
+                No Record found
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+  <div class="footer">
+      <p>Made with &hearts; by Monergize group</p>
+  </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>

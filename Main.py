@@ -1,7 +1,7 @@
 from flask import Flask,render_template,url_for,flash,redirect,request
 from flask_mysqldb import MySQL
 from flask_login import LoginManager,login_user,current_user,logout_user,login_required
-from form import LoginForm, DebitForm, RegisterForm, Loan_enquiryForm, Bank_LoginForm
+from form import LoginForm, DebitForm, RegisterForm, Loan_enquiryForm, Bank_LoginForm, Search_customer, ADD_loan, submitbutton
 from load_data import *
 import load_data
 
@@ -9,7 +9,7 @@ import load_data
 app = Flask(__name__ ,template_folder='templates' , static_folder='static')
 app.config['SECRET_KEY'] = '5791628bpowerb0b13ce0c676dfde280ba245'
 
-app.config['MYSQL_HOST']='10.0.0.7'
+app.config['MYSQL_HOST']='10.0.0.6'
 app.config['MYSQL_USER']='root'
 app.config['MYSQL_PASSWORD']='1107'
 app.config['MYSQL_DB']='bank'
@@ -23,8 +23,10 @@ login_manager.login_message_category='info'
 
 
 @login_manager.user_loader
-def load_user(user_id):
-    return User(user_id)
+def load_user(id):
+    if len(id)==10:return User(id)
+    if len(id)<10:return Bank(id)
+    return None
 
 @app.route("/")
 def hello():
@@ -50,7 +52,7 @@ def register():
         flash('Your account has been created! You are now able to log in', 'success')
     return render_template('register.html', title='Register', form=form)
 
-@app.route("/login/user", methods=['GET', 'POST'])
+@app.route("/login/User", methods=['GET', 'POST'])
 def login():
 
     if current_user.is_authenticated:
@@ -62,7 +64,7 @@ def login():
         verify_user=Verify_user(form.email.data,form.password.data)
         if verify_user!=-1:
             if form.remember.data:login_user(User(verify_user), remember=True)
-            else:login_user(User(verify_user))
+            else:login_user(User(verify_user),remember=False)
             next_page = request.args.get('next')
             flash('Logged in successfully', 'success')
             return redirect(next_page) if(next_page) else redirect(url_for('home'))
@@ -78,17 +80,16 @@ def bank_login():
     form = Bank_LoginForm()
 
     if form.validate_on_submit():
-        verify_banker=Verify_banker(form.bank_id.data,form.branch_id.data,form.password.data)
+        verify_banker=Verify_banker(form.universal_id.data,form.bank_id.data,int(form.branch_id.data),form.password.data)
         if verify_banker!=-1:
-            if form.remember.data:login_user(Bank(verify_banker), remember=True)
-            else:login_user(Bank(verify_banker))
-            next_page = request.args.get('next')
+            if form.remember.data:login_user(Bank(form.universal_id.data), remember=True)
+            else:login_user(Bank(form.universal_id.data), remember=False)
             flash('Logged in successfully', 'success')
-            return redirect(next_page) if(next_page) else redirect(url_for('home'))
+            return redirect(url_for('bank_home'))
         else:flash('Login Unsuccessful. Please check username and password', 'danger')
 
     return render_template('bank_sign_in.html', title='Login', form=form)
-
+    
 @app.route("/logout")
 def logout():
     logout_user()
@@ -152,6 +153,62 @@ def loan_enquire():
         else:
             flash('No Loan available for your requirement','success')
     return render_template('loan_enquire.html', title='Loan Enquiry', form=form) 
+
+@app.route("/bank/home")
+@login_required
+def bank_home():
+    return render_template('bank_home.html', title='Bank_home', total_customer=len(request_customerlist(current_user.bank_id,0,'customer_id')), pending_loan=len(search_loan_application('PENDING',current_user.bank_id)))
+
+@app.route("/bank/customer", methods=['GET', 'POST'])
+@login_required
+def print_customer_list():
+    form = Search_customer()
+    if form.validate_on_submit():
+        column=form.query_type.data
+        term=form.query.data
+        data=request_customerlist(current_user.bank_id,term,column)
+        if data==None or len(data)==0:
+            return render_template('customer_list.html', title='Customer list', customer_list=[], record=False, many_recored=False, form=form)
+        else:
+            if len(data)==1:
+                summary = load_data.request_User_summary(data[0]['customer_id'])
+                statements = []
+                for entry in summary:
+                    statements.append(list(entry.values()))
+                return render_template('customer_list.html', title='Customer list', customer_list=data[0], record=True, many_recored=False, summary=statements,form=form)
+            else:return render_template('customer_list.html', title='Customer list', customer_list=data, record=True, many_recored=True, form=form)
+    customer_list=request_customerlist(current_user.bank_id,0,'customer_id')
+    return render_template('customer_list.html', title='Customer list', customer_list=customer_list, record=True, many_recored=True, form=form)
+
+@app.route("/bank/add_loan", methods=['GET', 'POST'])
+@login_required
+def add_loan():  
+    current_loan=current_loan_in_database(current_user.bank_id,'0')
+    form=ADD_loan()
+    if form.validate_on_submit():
+        insert_loan_in_database(current_user.bank_id,form.loan_type.data,form.interest.data,form.max_period.data)
+        flash('New loan added into list','success')
+        return redirect(url_for('bank_home'))
+    return render_template('bank_add_loan.html',form=form, current_loan=current_loan)
+
+@app.route("/bank/clear_loan", methods=['GET', 'POST'])
+@login_required
+def clear_loan():   
+    applications = search_loan_application('PENDING',current_user.bank_id)
+    if request.method=='POST':
+        customer_list=request_customer_detail((request.form['submit']))
+        print(customer_list)
+        summary = load_data.request_User_summary(customer_list['customer_id'])
+        statements = []
+        for entry in summary:
+            statements.append(list(entry.values()))
+        return render_template('customer_detail.html', customer_list=customer_list, summary=statements) 
+    else:
+        if type(applications)==int:
+            return render_template('bank_loan_applications.html', hasdata=False)
+        else:
+            return render_template('bank_loan_applications.html', hasdata=True, current_loan=applications)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

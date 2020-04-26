@@ -26,9 +26,10 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Login')
 
 class Bank_LoginForm(FlaskForm):
+    universal_id = StringField('Universal ID', validators=[DataRequired(), Length(min=3, max=5)])
     bank_id = StringField('BANK ID',validators=[DataRequired(), Regexp(regex=r'^BANK\d{6}$',message="Bank ID should be in the form of BANK100001")])
     branch_id = StringField('Branch ID',validators=[DataRequired(), Length(min=6,max=6)])
-    password = PasswordField('Password', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=3,max=45)])
     remember = BooleanField('Remember Me', default="unchecked")
     submit = SubmitField('Login')
 
@@ -40,6 +41,19 @@ class DebitForm(FlaskForm):
 
 class Loan_enquiryForm(FlaskForm):
     principal = IntegerField('Loan Amount')
-    max_period = IntegerField('Period (Enter in months')
+    max_period = IntegerField('Period (Enter in months)')
     loan_type = SelectField('Type', choices=[('Car','Car'),('Home','Home'),('Business','Business'),('Personal','Personal'),('Extra','Extra')])
     submit = SubmitField('Enquire')
+
+class Search_customer(FlaskForm):
+    query = StringField('',validators=[Length(min=3)])
+    query_type = SelectField('Type', choices=[('customer_id','ID'),('name','Name'),('email','Email'),('account_no','Account Number')])
+    submit = SubmitField('Search')
+
+class ADD_loan(FlaskForm):
+    loan_type = SelectField('Type', choices=[('Car','Car'),('Home','Home'),('Business','Business'),('Personal','Personal'),('Extra','Extra')])
+    interest = IntegerField('Interest in percentage')
+    max_period = IntegerField('Period (Enter in months)')
+    submit = SubmitField('Add Loan')
+class submitbutton(FlaskForm):
+    submit = SubmitField('Submit')

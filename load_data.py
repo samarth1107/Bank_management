@@ -21,11 +21,13 @@ class User(UserMixin):
 #This is for bank class
 class Bank(UserMixin):
     def __repr__(self):
-        return f"Bank('{self.id}', '{self.branch}', '{self.password}'"
-    def __init__(self, id, branch, password):
-        self.id=id
-        self.branch=branch
-        self.password=password
+        return f"Bank('{self.id}', '{self.bank_id}', '{self.name}', '{self.branch}'"
+    def __init__(self, id):
+        data = request_Bank_detail(id)
+        self.id=data['Universal_id']
+        self.bank_id=data['bank_id']
+        self.name=data['bank_name']
+        self.branch=data['branch_id']
 
 def Verify_user(email, password):
     cur = mysql.connection.cursor()
@@ -42,22 +44,24 @@ def Verify_user(email, password):
         else:return -1
     else:return -1
     
-def Verify_banker(bank_id, branch_id, password):
+def Verify_banker(universal_id, bank_id, branch_id, password):
     cur = mysql.connection.cursor()
     cur.execute("SELECT * FROM bank.bank_login_detail;")
     data = cur.fetchall()
     cur.close()
-    
-    bank_ids = [sub['Bank_id'] for sub in data] 
-    branch_ids = [sub['Branch_id'] for sub in data] 
-    dbpassword = [sub['password'] for sub in data] 
-    
-    a_index = bank_ids.index(bank_id)
-    b_index = branch_ids.index(branch_id)
-    c_index = dbpassword.index(password)
-
-    if a_index==b_index and a_index==c_index:return 1
+        
+    for row in range(len(data)):
+        if data[row]['Universal_id']==universal_id:
+            if (data[row]['Bank_id']==bank_id and data[row]['Branch_id']==branch_id and data[row]['password']==password):
+                return 1
     else: return -1
+
+def request_Bank_detail(universal_id):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM bank.bank WHERE Universal_id = %s;",[str(universal_id)])
+    data = cur.fetchone()
+    cur.close()
+    return data
         
 def request_User_detail(id):
     cur = mysql.connection.cursor()
@@ -154,4 +158,78 @@ def enquire_loan(type,principal,period):
             data_loan.append(list(entry.values()))
         return data_loan,EMI
     else: return False,False
-    
+
+def request_customerlist(bankid, term, column):
+    cur = mysql.connection.cursor()
+    if term==0:
+        cur.execute("SELECT s.customer_id,s.name,s.email,s.house_no,s.sector,s.city,s.city,s.state,s.pin_code,s.age,s.gender,s.dob,m.bank_id,m.account_no,m.account_balance,m.account_type,m.account_pin,d.password FROM customer_personal_detail s LEFT JOIN customer_bank_details m ON s.customer_id = m.customer_id LEFT JOIN customer_login_detail d ON d.customer_id = m.customer_id WHERE m.bank_id=%s;",[str(bankid)])
+        customerlist=cur.fetchall()
+        cur.close()
+        return customerlist
+    else:
+        if column=='customer_id':
+            cur.execute("SELECT s.customer_id,s.name,s.email,s.house_no,s.sector,s.city,s.city,s.state,s.pin_code,s.age,s.gender,s.dob,m.bank_id,m.account_no,m.account_balance,m.account_type,m.account_pin,d.password FROM customer_personal_detail s LEFT JOIN customer_bank_details m ON s.customer_id = m.customer_id LEFT JOIN customer_login_detail d ON d.customer_id = m.customer_id WHERE m.bank_id=%s AND s.customer_id LIKE %s;",[str(bankid),'%'+str(term)+"%"])
+        elif column=='name':
+            cur.execute("SELECT s.customer_id,s.name,s.email,s.house_no,s.sector,s.city,s.city,s.state,s.pin_code,s.age,s.gender,s.dob,m.bank_id,m.account_no,m.account_balance,m.account_type,m.account_pin,d.password FROM customer_personal_detail s LEFT JOIN customer_bank_details m ON s.customer_id = m.customer_id LEFT JOIN customer_login_detail d ON d.customer_id = m.customer_id WHERE m.bank_id=%s AND s.name LIKE %s;",[str(bankid),'%'+str(term)+'%'])
+        elif column=='email':
+            cur.execute("SELECT s.customer_id,s.name,s.email,s.house_no,s.sector,s.city,s.city,s.state,s.pin_code,s.age,s.gender,s.dob,m.bank_id,m.account_no,m.account_balance,m.account_type,m.account_pin,d.password FROM customer_personal_detail s LEFT JOIN customer_bank_details m ON s.customer_id = m.customer_id LEFT JOIN customer_login_detail d ON d.customer_id = m.customer_id WHERE m.bank_id=%s AND s.email LIKE %s;",[str(bankid),'%'+str(term)+'%'])
+        else:
+            cur.execute("SELECT s.customer_id,s.name,s.email,s.house_no,s.sector,s.city,s.city,s.state,s.pin_code,s.age,s.gender,s.dob,m.bank_id,m.account_no,m.account_balance,m.account_type,m.account_pin,d.password FROM customer_personal_detail s LEFT JOIN customer_bank_details m ON s.customer_id = m.customer_id LEFT JOIN customer_login_detail d ON d.customer_id = m.customer_id WHERE m.bank_id=%s AND m.account_no LIKE %s;",[str(bankid),'%'+str(term)+'%'])
+        customerlist=cur.fetchall()
+        cur.close()
+        return customerlist
+
+def current_loan_in_database(bank_id, loan_type):
+    cur = mysql.connection.cursor()
+    if loan_type=='0':
+        cur.execute("SELECT * FROM bank.bank_loan_detail WHERE bank_id=%s;",[str(bank_id)])
+        loans=cur.fetchall()
+        cur.close()
+        if loans==None or len(loans)==0:return -1
+        else:return loans
+    elif bank_id=='0' and loan_type=='0':
+        cur.execute("SELECT * FROM bank.bank_loan_detail;")
+        loans=cur.fetchall()
+        cur.close()
+        if loans==None or len(loans)==0:
+            return -1
+        else:return loans
+    else:
+        cur.execute("SELECT * FROM bank.bank_loan_detail WHERE bank_id=%s AND loan_type=%s;",[str(bank_id),str(loan_type)])
+        loans=cur.fetchall()
+        cur.close()
+        if loans==None or len(loans)==0:
+            return -1
+        else:return loans
+
+def insert_loan_in_database(bank_id, loan_type, interest, max_period):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT MAX(loan_id) FROM bank.bank_loan_detail;")
+    id_val = int(cur.fetchone()['MAX(loan_id)'])+1
+    cur.execute("INSERT INTO bank.bank_loan_detail VALUES(%s, %s, %s, %s, %s)", [id_val, str(bank_id), str(loan_type), int(interest), int(max_period)])
+    mysql.connection.commit()
+    cur.close()
+
+def search_loan_application(status, bank_id):
+    cur = mysql.connection.cursor()
+    if status=='0':
+        cur.execute("SELECT * FROM bank.loan_application_data l LEFT JOIN bank.customer_bank_details b ON l.Customer_id=b.customer_id WHERE b.bank_id=%s;",[str(bank_id)])
+        loans=cur.fetchall()
+        cur.close()
+        if loans==None or len(loans)==0:return -1
+        else:return loans
+    else:
+        cur.execute("SELECT * FROM bank.loan_application_data l LEFT JOIN bank.customer_bank_details b ON l.Customer_id=b.customer_id WHERE b.bank_id=%s AND l.status=%s;",[str(bank_id),str(status)])
+        loans=cur.fetchall()
+        cur.close()
+        if loans==None or len(loans)==0:
+            return -1
+        else:return loans
+
+
+def request_customer_detail(term):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT s.customer_id,s.name,s.email,s.house_no,s.sector,s.city,s.city,s.state,s.pin_code,s.age,s.gender,s.dob,m.bank_id,m.account_no,m.account_balance,m.account_type,m.account_pin,d.password,e.Company_ID,e.Company_Name,e.Sector,e.Working_From,e.Working_Till FROM customer_personal_detail s LEFT JOIN customer_bank_details m ON s.customer_id = m.customer_id LEFT JOIN customer_login_detail d ON d.customer_id = m.customer_id LEFT JOIN customer_employment_details e ON e.customer_id = s.customer_id WHERE s.customer_id LIKE %s;",['%'+str(term)+"%"])
+    customerlist=cur.fetchone()
+    cur.close()
+    return customerlist

@@ -1,0 +1,37 @@
+{% extends "layout_bank.html" %}
+{% block content %}
+    
+    {% if message %}
+    <p>{{ message }}</p>
+    {% endif %}
+
+    <div class="page-header m-5 p-2 round bg-light round_border light_shadow">
+        <h1>{{current_user.name}}</h1>
+        <h1>ID : {{current_user.bank_id}} </h1>
+        <h1>Branch : {{current_user.branch}} </h1>
+    </div>
+
+    <div class="row my-2">
+        <div class="col-md-6">
+          <div class="card light_shadow">
+            <div class="card-body">
+              <h5 class="card-title">Current customer : {{total_customer}}</h5>
+              <p class="card-text">To search customer on the basis on their ID, account number, email or name click below</p>
+              <a href="{{url_for('print_customer_list')}}" class="btn btn-primary">Customer Search</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card light_shadow">
+            <div class="card-body">
+              <h5 class="card-title">Pending Loan request : {{pending_loan}}</h5>
+              <p class="card-text">clear pending loan application from customers and to see current loan in the list click see loan</p>
+              <a href="{{url_for('clear_loan')}}" class="btn btn-primary">Clear application</a>
+              <a href="{{url_for('add_loan')}}" class="btn btn-primary">See loans</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    
+{% endblock content %}
