@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, IntegerField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, IntegerField, RadioField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, Regexp, Required
 
 
@@ -33,6 +33,12 @@ class Bank_LoginForm(FlaskForm):
     remember = BooleanField('Remember Me', default="unchecked")
     submit = SubmitField('Login')
 
+class Company_LoginForm(FlaskForm):
+    company_id = StringField('Company ID',validators=[DataRequired(), Regexp(regex=r'^COMP\d{6}$',message="Company ID should be in the form of COMP100001")])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=3,max=45)])
+    remember = BooleanField('Remember Me', default="unchecked")
+    submit = SubmitField('Login')
+
 class DebitForm(FlaskForm):
     Account_number = StringField('Account Number', validators=[Regexp(regex=r'^ACC-\d{3}$',message="Example Account number ACC-101")])
     Pin = StringField('Pin Number', validators=[Length(min=4, max=4)])
@@ -55,5 +61,34 @@ class ADD_loan(FlaskForm):
     interest = IntegerField('Interest in percentage')
     max_period = IntegerField('Period (Enter in months)')
     submit = SubmitField('Add Loan')
+
 class submitbutton(FlaskForm):
     submit = SubmitField('Submit')
+
+class BankPrefForm(FlaskForm):
+    radio = RadioField('Parameters', choices=[('Most Trusted','Most Trusted'),('Loan Friendly','Loan Friendly'),('Best for Savings','Best for Savings'),('Least Minimum Account Balance','Least Minimum Account Balance')])
+    submit = SubmitField('Search')
+
+class StockForm(FlaskForm):
+    radio = RadioField('Sort using:', choices = [('pe_ratio','Profit'),('market_value','Price'),('company_name','Name')])
+    submit = SubmitField('Search')
+
+class PerformanceForm(FlaskForm):
+    id = StringField('Company ID')
+    submit = SubmitField('Submit')
+
+class MNCPayForm(FlaskForm):
+    id = StringField('Company ID')
+    submit = SubmitField('Submit')
+
+class PaymentForm(FlaskForm):
+    id = StringField('Recipients ID')
+    amount = StringField('Amount')
+    radio = RadioField('Choose', choices=[('Employee','Employee'),('Start Ups','Start Ups')])
+    cid = StringField('Your ID')
+    pin = PasswordField('PIN')
+    submit = SubmitField('CONFIRM')
+
+class EKartForm(FlaskForm):
+    radio = RadioField('Filters', choices=[('Food','Food'),('Fashion','Fashion'),('Fitness','Fitness'),('Gadgets','Gadgets'),('Best Sellers','Best Sellers'),('Lowest Prices','Lowest Prices')])
+    submit = SubmitField('Find the right item!')

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}" type="text/css">
+
+    {% if title %}
+        <title>{{ title }}</title>
+    {% else %}
+        <title>Monergize</title>
+    {% endif %}
+
+</head>
+<body style="background-color: #00000026">
+
+  <header>
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+
+      <a class="navbar-brand" href="#">{{current_user.name}}</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link active" href="{{url_for('company_home')}}"> &#8592 BACK <span class="sr-only">(current)</span></a>
+          </li>
+        </ul>
+
+        <div class="navbar-nav">
+          <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
+        </div>
+      </div>
+    </nav>
+  </header> 
+
+  <main role="main" class="container-fluid">
+    
+    <div class="row">
+        <div class="col-md-3"></div>
+    <div class="col-md-6 round_border bg-light p-2 m-2">
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Get Details</legend>
+                
+                <div class="form-group">
+                    {{ form.id.label(class="form-control-label") }}
+                    {% if form.id.errors %}
+                        {{ form.id(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.id.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.id(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+
+
+            </fieldset>
+
+            <div class="form-group">
+                {{ form.submit(class="btn btn-outline-info") }}
+            </div>
+
+
+
+        </form>
+    </div>
+        <div class="col-md-3"></div>
+    </div>
+
+    <div class="row round bg-light mx-4 my-2">
+    <H3>EMPLOYEE DATA</H3>
+    <table style="width: 100%">
+        <tr>
+            <th>CUST_ID</th>
+            <th>COMPANY_ID</th>
+            <th>SECTOR</th>
+            <th>PRODUCT</th>
+            <th>NAME</th>
+            <th>WORKING FROM</th>
+            <th>WORKING TILL</th>
+        </tr> 
+        {% for record in data %}
+        <tr>
+            {% for val in record %}
+            <td>
+                {{ val }}
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+    </div>
+
+    <div class="row round bg-light mx-4 my-2">
+    <H3>STARTUP DATA</H3>
+    <table style="width: 100%">
+        <tr>
+            <th>CUST_ID</th>
+            <th>COMPANY_ID</th>
+            <th>SECTOR</th>
+            <th>PRODUCT</th>
+            <th>NAME</th>
+            <th>WORKING FROM</th>
+            <th>WORKING TILL</th>
+            <th>WORKING TILL</th>
+        </tr> 
+        {% for record in data1 %}
+        <tr>
+            {% for val in record %}
+            <td>
+                {{ val }}
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+    </div>
+
+    <div class="row round bg-light mx-4 my-2">
+    <H3>CUSTOM DUTY</H3>
+    <table style="width: 100%">
+        <tr>
+            <th>VALUE</th>
+        </tr> 
+        {% for record in data2 %}
+        <tr>
+            {% for val in record %}
+            <td>
+                {{ val }}
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+    </div>
+  </main>
+
+  <div class="footer">
+      <p>Made with &hearts; by Monergize group</p>
+  </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>

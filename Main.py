@@ -1,15 +1,16 @@
 from flask import Flask,render_template,url_for,flash,redirect,request
 from flask_mysqldb import MySQL
 from flask_login import LoginManager,login_user,current_user,logout_user,login_required
-from form import LoginForm, DebitForm, RegisterForm, Loan_enquiryForm, Bank_LoginForm, Search_customer, ADD_loan, submitbutton
+#from form import LoginForm, DebitForm, RegisterForm, Loan_enquiryForm, Bank_LoginForm, Search_customer, ADD_loan, submitbutton, Company_LoginForm, BankPrefForm, StockForm, PerformanceForm, MNCPayForm
+from form import *
 from load_data import *
-import load_data
+#import load_data
 
 
 app = Flask(__name__ ,template_folder='templates' , static_folder='static')
 app.config['SECRET_KEY'] = '5791628bpowerb0b13ce0c676dfde280ba245'
 
-app.config['MYSQL_HOST']='10.0.0.6'
+app.config['MYSQL_HOST']='10.0.0.7'
 app.config['MYSQL_USER']='root'
 app.config['MYSQL_PASSWORD']='1107'
 app.config['MYSQL_DB']='bank'
@@ -24,8 +25,9 @@ login_manager.login_message_category='info'
 
 @login_manager.user_loader
 def load_user(id):
+    if 'COMP' in id:return Company(id)
+    if 'B' in id:return Bank(id)
     if len(id)==10:return User(id)
-    if len(id)<10:return Bank(id)
     return None
 
 @app.route("/")
@@ -48,7 +50,7 @@ def register():
     form = RegisterForm()
     if form.validate_on_submit():
         user_info = [form.name.data, form.email.data, form.houseno.data, form.sector.data, form.city.data, form.state.data, form.pin.data, form.age.data, form.gender.data, form.dob.data, form.father.data, form.mother.data]
-        load_data.insert_user(user_info)
+        insert_user(user_info)
         flash('Your account has been created! You are now able to log in', 'success')
     return render_template('register.html', title='Register', form=form)
 
@@ -90,6 +92,24 @@ def bank_login():
 
     return render_template('bank_sign_in.html', title='Login', form=form)
     
+@app.route("/login/company", methods=['GET', 'POST'])
+def company_login():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+
+    form = Company_LoginForm()
+
+    if form.validate_on_submit():
+        verify_comp=Verify_company(form.company_id.data,form.password.data)
+        if verify_comp!=-1:
+            if form.remember.data:login_user(Company(form.company_id.data), remember=True)
+            else:login_user(Company(form.company_id.data), remember=False)
+            flash('Logged in successfully', 'success')
+            return redirect(url_for('company_home'))
+        else:flash('Login Unsuccessful. Please check username and password', 'danger')
+
+    return render_template('company_sign_in.html', title=' Corporate Login', form=form)
+
 @app.route("/logout")
 def logout():
     logout_user()
@@ -98,7 +118,7 @@ def logout():
 @app.route("/account")
 @login_required
 def account():
-    user_data,bank_detail,employee_detail=load_data.request_User_detail(current_user.id)
+    user_data,bank_detail,employee_detail= request_User_detail(current_user.id)
     user_data=list(user_data.values())
     bank_detail=list(bank_detail.values())
     employee_detail=list(employee_detail.values())
@@ -129,7 +149,7 @@ def debit():
 @app.route("/summary")
 @login_required
 def summary():
-    summary = load_data.request_User_summary(current_user.id)
+    summary =  request_User_summary(current_user.id)
 
     data = []
     for entry in summary:
@@ -139,7 +159,7 @@ def summary():
                             title='Summary',
                             user_id=current_user.id,
                             user_name=current_user.name,
-                            bank_detail=list(load_data.request_User_bank_detail(current_user.id).values()), 
+                            bank_detail=list(request_User_bank_detail(current_user.id).values()), 
                             summary=data)
 
 @app.route("/loan_enquire", methods=['GET', 'POST'])
@@ -171,7 +191,7 @@ def print_customer_list():
             return render_template('customer_list.html', title='Customer list', customer_list=[], record=False, many_recored=False, form=form)
         else:
             if len(data)==1:
-                summary = load_data.request_User_summary(data[0]['customer_id'])
+                summary =  request_User_summary(data[0]['customer_id'])
                 statements = []
                 for entry in summary:
                     statements.append(list(entry.values()))
@@ -198,7 +218,7 @@ def clear_loan():
     if request.method=='POST':
         customer_list=request_customer_detail((request.form['submit']))
         print(customer_list)
-        summary = load_data.request_User_summary(customer_list['customer_id'])
+        summary =  request_User_summary(customer_list['customer_id'])
         statements = []
         for entry in summary:
             statements.append(list(entry.values()))
@@ -209,6 +229,78 @@ def clear_loan():
         else:
             return render_template('bank_loan_applications.html', hasdata=True, current_loan=applications)
 
+@app.route("/corporate/home", methods=['GET', 'POST'])
+def company_home():
+    return render_template('company_home.html',title='Home')
+
+@app.route("/corporate/banks", methods=['GET', 'POST'])
+def banks_performance():
+    data =  bank_recc(0)
+    form = BankPrefForm()
+    if form.validate_on_submit():
+        data = bank_recc(form.radio.data)
+    statements = []
+    for entry in data:
+        statements.append(list(entry.values()))
+    data=statements
+    return render_template('Bank_performance.html', form=form, data=data)
+
+@app.route("/corporate/stock", methods=['GET', 'POST'])
+def stock_comparision():
+    data = load_market_data('pe_ratio')
+    form = StockForm()
+    if form.validate_on_submit():
+        data = load_market_data(form.radio.data)
+    statements = []
+    for entry in data:
+        statements.append(list(entry.values()))
+    data=statements
+    return render_template('stock_performance.html', form=form, data=data)
+
+@app.route("/corporate/perform", methods=['GET', 'POST'])
+def company_performance():
+    data0 = (('NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA'),)
+    data = (('NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA'),)
+    data1 = (('NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA'),)
+    data2 = (('NA','NA'),)
+    form = PerformanceForm()
+    if form.validate_on_submit():
+        data0 =  own_market_data(form.id.data)
+        data = best_company()
+        data1 =  better_company(form.id.data)
+        data2 =  rev_by_category()
+    return render_template('corporate_performance.html', form=form, data=data, data1=data1, data2 = data2, data0=data0)
+
+@app.route("/coporate/mnc/pay", methods=['GET', 'POST'])
+def mnc_pay():
+    data = (('NA','NA','NA','NA','NA','NA','NA'),)
+    data1 = (('NA','NA','NA','NA','NA','NA','NA','NA'),)
+    data2 = (('NA',),)
+    form = MNCPayForm()
+    if form.validate_on_submit():
+        data = load_employee_data(form.id.data)
+        data1 =  load_su_data()
+        data2 =  custom_duty(form.id.data)
+    return render_template('mnc_payment.html', form=form, data=data, data1=data1, data2 = data2, title='MNC Payment')
+
+@app.route("/coporate/payment", methods=['GET', 'POST'])
+def corporate_payment():
+    form = PaymentForm()
+    if form.validate_on_submit():
+        id = form.id.data
+        amount = form.amount.data
+        radio = form.radio.data
+        add_amount(id,amount,radio)
+        flash("amount: "+amount+" transferred to "+radio+" "+id+" successfully "+' Transaction ID: 123456789')
+    return render_template('corporate_payment.html', form=form, title='Corporate payments')
+
+@app.route("/corporate/ekart", methods=['GET', 'POST'])
+def ekart():
+    data = load_products(0)
+    form = EKartForm()
+    if form.validate_on_submit():
+        data =load_products(form.radio.data)
+    return render_template('corporate_ekart.html', form=form, data=data)
 
 if __name__ == '__main__':
     app.run(debug=True)

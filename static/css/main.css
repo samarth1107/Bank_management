@@ -23,12 +23,22 @@ body {
   border-radius: 8px;
 }
 
+.border_small{
+  border: 1px solid #343a40;
+  border-radius: 0px;
+}
+
+
 .light_shadow{
   box-shadow: 10px 10px 4px 6px #ccc;
 }
 
 .vl {
   border-left: 2px solid black;
+}
+
+.rl {
+  border-right: 2px solid black;
 }
 
 .inside {

@@ -1,0 +1,13 @@
+{% extends "layout_company.html" %}
+{% block content %}
+    
+    {% if message %}
+    <p>{{ message }}</p>
+    {% endif %}
+
+    <div class="page-header">
+        <h1>{{current_user.name}}</h1>
+    </div>
+
+    
+{% endblock content %}
