@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.19, for Win64 (x86_64)
 --
--- Host: 10.0.0.7    Database: bank
+-- Host: localhost    Database: bank
 -- ------------------------------------------------------
 -- Server version	8.0.19
 
@@ -38,7 +38,7 @@ CREATE TABLE `bank_loan_detail` (
 
 LOCK TABLES `bank_loan_detail` WRITE;
 /*!40000 ALTER TABLE `bank_loan_detail` DISABLE KEYS */;
-INSERT INTO `bank_loan_detail` VALUES (1,'BANK100001','Car',10,400),(2,'BANK100002','Personal',20,510),(3,'BANK100003','Business',11,650),(4,'BANK100006','Home',12,450),(5,'BANK100006','Car',10,650);
+INSERT INTO `bank_loan_detail` VALUES (1,'BANK100001','Car',10,400),(2,'BANK100002','Personal',20,510),(3,'BANK100003','Business',11,650),(4,'BANK100004','Home',12,450),(5,'BANK100005','Car',9,650),(6,'BANK100006','Extra',8,12),(7,'BANK100001','Home',8,600);
 /*!40000 ALTER TABLE `bank_loan_detail` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -51,4 +51,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-04-26  5:07:45
+-- Dump completed on 2020-04-27 23:30:00

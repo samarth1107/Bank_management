@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.19, for Win64 (x86_64)
 --
--- Host: 10.0.0.7    Database: bank
+-- Host: localhost    Database: bank
 -- ------------------------------------------------------
 -- Server version	8.0.19
 
@@ -23,6 +23,7 @@ DROP TABLE IF EXISTS `bank`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `bank` (
+  `Universal_id` char(5) COLLATE utf8_unicode_ci NOT NULL,
   `bank_id` char(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `bank_name` varchar(20) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `branch_id` int NOT NULL,
@@ -38,7 +39,7 @@ CREATE TABLE `bank` (
   `annual_share_govt` float DEFAULT NULL,
   `loan_taken` int DEFAULT NULL,
   `money_lent` int NOT NULL,
-  PRIMARY KEY (`bank_id`)
+  PRIMARY KEY (`bank_id`,`Universal_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -48,7 +49,7 @@ CREATE TABLE `bank` (
 
 LOCK TABLES `bank` WRITE;
 /*!40000 ALTER TABLE `bank` DISABLE KEYS */;
-INSERT INTO `bank` VALUES ('BANK100001','SBI',100001,'Okhla',1234567890,0,7700000,15,4,10,0,10000,770000,0,0),('BANK100002','UBI',100002,'Vasant Kunj',1234567891,0,9800000,13.5,4.5,11,0,10000,980000,0,0),('BANK100003','BOB',100003,'Vasant Kunj',1234567892,0,11900000,14,6,11,0,0,1190000,0,0),('BANK100004','HDFC',100004,'Kalkaji',1234567893,0,14000000,12.5,7,11,0,0,1400000,0,0),('BANK100005','HSBC',100005,'Nehru Place',1234567894,0,161000000,12,4,10.5,0,0,16100000,0,0),('BANK100006','PNB',100006,'Nehru Place',1234567895,0,182000,12,5.5,10,0,5000,18200,0,0);
+INSERT INTO `bank` VALUES ('B102','BANK100001','SBI',100001,'Okhla',1234567890,0,7700000,15,4,10,0,10000,770000,0,0),('B104','BANK100002','UBI',100001,'Vasant Kunj',1234567891,0,9800000,13.5,4.5,11,0,10000,980000,0,0),('B106','BANK100003','BOB',100001,'Vasant Kunj',1234567892,0,11900000,14,6,11,0,0,1190000,0,0),('B108','BANK100004','HDFC',100001,'Kalkaji',1234567893,0,14000000,12.5,7,11,0,0,1400000,0,0),('B110','BANK100005','HSBC',100001,'Nehru Place',1234567894,0,161000000,12,4,10.5,0,0,16100000,0,0),('B112','BANK100006','PNB',100001,'Nehru Place',1234567895,0,182000,12,5.5,10,0,5000,18200,0,0);
 /*!40000 ALTER TABLE `bank` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -61,4 +62,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-04-26  5:07:45
+-- Dump completed on 2020-04-27 23:29:59

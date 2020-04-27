@@ -16,29 +16,27 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `bank_login_detail`
+-- Table structure for table `company_login_detail`
 --
 
-DROP TABLE IF EXISTS `bank_login_detail`;
+DROP TABLE IF EXISTS `company_login_detail`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `bank_login_detail` (
-  `Universal_id` char(5) NOT NULL,
-  `Bank_id` char(10) NOT NULL,
-  `Branch_id` int NOT NULL,
+CREATE TABLE `company_login_detail` (
+  `company_id` varchar(10) NOT NULL,
   `password` varchar(45) NOT NULL,
-  PRIMARY KEY (`Bank_id`,`Branch_id`,`Universal_id`)
+  PRIMARY KEY (`company_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `bank_login_detail`
+-- Dumping data for table `company_login_detail`
 --
 
-LOCK TABLES `bank_login_detail` WRITE;
-/*!40000 ALTER TABLE `bank_login_detail` DISABLE KEYS */;
-INSERT INTO `bank_login_detail` VALUES ('B101','BANK100001',0,'main_1'),('B102','BANK100001',100001,'branch1234'),('B103','BANK100002',0,'main_2'),('B104','BANK100002',100001,'branch1234'),('B105','BANK100003',0,'main_3'),('B106','BANK100003',100001,'branch1234'),('B107','BANK100004',0,'main_4'),('B108','BANK100004',100001,'branch1234'),('B109','BANK100005',0,'main_5'),('B110','BANK100005',100001,'branch1234'),('B111','BANK100006',0,'main_6'),('B112','BANK100006',100001,'branch1234');
-/*!40000 ALTER TABLE `bank_login_detail` ENABLE KEYS */;
+LOCK TABLES `company_login_detail` WRITE;
+/*!40000 ALTER TABLE `company_login_detail` DISABLE KEYS */;
+INSERT INTO `company_login_detail` VALUES ('COMP100001','1234567'),('COMP100002','1234567'),('COMP100003','1234567'),('COMP100004','1234567'),('COMP100005','1234567'),('COMP100006','1234567'),('COMP100007','1234567'),('COMP100008','1234567'),('COMP100009','1234567'),('COMP100010','1234567'),('COMP100011','1234567'),('COMP100012','1234567'),('COMP100013','1234567'),('COMP100014','1234567'),('COMP100015','1234567'),('COMP100016','1234567'),('COMP100017','1234567'),('COMP100018','1234567'),('COMP100019','1234567'),('COMP100020','1234567'),('COMP100021','1234567'),('COMP100022','1234567'),('COMP100023','1234567'),('COMP100024','1234567'),('COMP100025','1234567'),('COMP100026','1234567'),('COMP100027','1234567'),('COMP100028','1234567'),('COMP100029','1234567'),('COMP100030','1234567'),('COMP100031','1234567'),('COMP100032','1234567'),('COMP100033','1234567'),('COMP100034','1234567'),('COMP100035','1234567'),('COMP100036','1234567'),('COMP100037','1234567'),('COMP100038','1234567'),('COMP100039','1234567'),('COMP100040','1234567');
+/*!40000 ALTER TABLE `company_login_detail` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -50,4 +48,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-04-27 23:30:02
+-- Dump completed on 2020-04-27 23:29:56

@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.19, for Win64 (x86_64)
 --
--- Host: 10.0.0.7    Database: bank
+-- Host: localhost    Database: bank
 -- ------------------------------------------------------
 -- Server version	8.0.19
 
@@ -26,7 +26,9 @@ CREATE TABLE `loan_application_data` (
   `application_id` int NOT NULL AUTO_INCREMENT,
   `Loan_id` int NOT NULL,
   `Customer_id` int NOT NULL,
-  `Status` varchar(45) NOT NULL DEFAULT 'PENDING',
+  `Status` set('PENDING','ACCEPTED','REJECTED') NOT NULL DEFAULT 'PENDING',
+  `principal` int NOT NULL,
+  `max_period` int NOT NULL,
   PRIMARY KEY (`application_id`),
   UNIQUE KEY `application_id_UNIQUE` (`application_id`),
   KEY `loan_id` (`Loan_id`)
@@ -39,7 +41,7 @@ CREATE TABLE `loan_application_data` (
 
 LOCK TABLES `loan_application_data` WRITE;
 /*!40000 ALTER TABLE `loan_application_data` DISABLE KEYS */;
-INSERT INTO `loan_application_data` VALUES (1000000001,1,1000000001,'ACCEPTED'),(1000000002,4,1000000002,'ACCEPTED'),(1000000003,2,1000000003,'ACCEPTED'),(1000000004,5,1000000004,'ACCEPTED'),(1000000005,2,1000000005,'ACCEPTED'),(1000000006,3,1000000006,'ACCEPTED');
+INSERT INTO `loan_application_data` VALUES (1000000001,1,1000000001,'PENDING',100000,100),(1000000002,4,1000000002,'PENDING',100000,102),(1000000003,2,1000000003,'PENDING',100000,200),(1000000004,5,1000000004,'PENDING',100000,50),(1000000005,2,1000000005,'PENDING',100000,80),(1000000006,3,1000000006,'PENDING',100000,75),(1000000007,1,1000000007,'PENDING',100000,78);
 /*!40000 ALTER TABLE `loan_application_data` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -52,4 +54,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-04-26  5:07:42
+-- Dump completed on 2020-04-27 23:29:57
