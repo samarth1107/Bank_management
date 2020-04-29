@@ -8,6 +8,7 @@ import png
 from pyqrcode import QRCode
 import re
 import os
+import pygal
 
 
 app = Flask(__name__ ,template_folder='templates' , static_folder='static')
@@ -33,9 +34,68 @@ def load_user(id):
     if len(id)==10:return User(id)
     return None
 
-@app.route("/")
+@app.route("/", methods=['GET', 'POST'])
 def hello():
-    return render_template('Main_home.html',title="Home page")
+    form = InvestForm()
+    if form.validate_on_submit():
+        print(form.profit.data)
+        if form.profit.data == 'H' and form.risk.data == 'L' and form.time.data == 'H':
+            return redirect(url_for('nps'))                
+        elif form.profit.data == 'M' and form.risk.data == 'L':
+            return redirect(url_for('gold'))
+        elif form.profit.data == 'H' and form.risk.data == 'H':
+            return redirect(url_for('nifty'))
+        elif form.profit.data == 'M' and form.risk.data == 'H':
+            return redirect(url_for('sensex'))
+        elif form.profit.data == 'H' and form.risk.data == 'M':
+            return redirect(url_for('mutual'))
+        elif form.profit.data == 'H' and form.risk.data == 'L' and form.time.data == 'L' and form.capital.data =='H':
+            return redirect(url_for('real'))
+        elif form.profit.data == 'M' and form.risk.data == 'L' and form.time.data == 'H':
+            return redirect(url_for('ppf'))
+        elif form.profit.data == 'L' and form.risk.data == 'L' and form.time.data == 'H':
+            return redirect(url_for('fd'))
+        elif form.profit.data == 'M' and form.risk.data == 'M':
+            return redirect(url_for('bonds'))
+        else:
+            flash("Your requirements need to be modified for the accurate results",'success')
+    return render_template('Main_home.html',title="Home page", form=form)
+
+@app.route('/nps', methods=['GET', 'POST'])
+def nps():
+    return render_template('nps.html', title = 'NPS')
+
+@app.route('/fd', methods=['GET', 'POST'])
+def fd():
+    return render_template('fd.html', title = 'NPS')
+
+@app.route('/gold', methods=['GET', 'POST'])
+def gold():
+    return render_template('gold.html', title = 'NPS')
+
+@app.route('/sensex', methods=['GET', 'POST'])
+def sensex():
+    return render_template('sensex.html', title = 'NPS')
+
+@app.route('/nifty', methods=['GET', 'POST'])
+def nifty():
+    return render_template('nifty.html', title = 'NPS')
+
+@app.route('/real', methods=['GET', 'POST'])
+def real():
+    return render_template('real.html', title = 'NPS')
+
+@app.route('/ppf', methods=['GET', 'POST'])
+def ppf():
+    return render_template('ppf.html', title = 'NPS')
+
+@app.route('/mutual', methods=['GET', 'POST'])
+def mutual():
+    return render_template('mutual.html', title = 'NPS')
+
+@app.route('/bonds', methods=['GET', 'POST'])
+def bonds():
+    return render_template('bonds.html', title = 'NPS')
 
 @app.route("/home")
 @login_required
@@ -340,18 +400,37 @@ def banks_performance():
     data=statements
     return render_template('Bank_performance.html', form=form, data=data, title='Bank Performance')
 
-@app.route("/corporate/stock", methods=['GET', 'POST'])
+@app.route("/stock", methods=['GET', 'POST'])
 @login_required
 def stock_comparision():
     data = load_market_data('pe_ratio')
     form = StockForm()
+    try:
+        if('See graph' in request.form['submit']):
+            print('making graph')
+            data=bank_recc('graph')
+            bar_labels=[]
+            bar_values=[]
+            for j in data:
+                bar_labels.append(j['bank_name'])
+                bar_values.append(j['ROI_for_loans'])
+            chart = pygal.Bar(width=1200, height=700,spacing=100,explicit_size=True)
+            chart.title='ROI for Loan Comparison'
+            for i in range(len(bar_labels)):
+                chart.add(bar_labels[i],(bar_values[i]))
+            graph = chart.render_data_uri()
+            return render_template('stock_performance.html', form=form, data=data, title='Stocks', bar_graph=True, graph=graph)
+    except:
+        pass
+        
     if form.validate_on_submit():
         data = load_market_data(form.radio.data)
     statements = []
     for entry in data:
         statements.append(list(entry.values()))
     data=statements
-    return render_template('stock_performance.html', form=form, data=data, title='Stocks')
+    return render_template('stock_performance.html', form=form, data=data, title='Stocks', bar_graph=False)
+
 
 @app.route("/corporate/perform", methods=['GET', 'POST'])
 @login_required
@@ -399,12 +478,26 @@ def ekart():
     data = load_products(0)
     form = EKartForm()
     if form.validate_on_submit():
+        if(form.radio.data=='graph'):
+            data=load_products('graph')
+            print(data)
+            bar_labels=[]
+            bar_values=[]
+            for j in data:
+                bar_labels.append(j[0])
+                bar_values.append(j[4])
+            chart = pygal.Bar(width=1200, height=700,spacing=100,explicit_size=True)
+            chart.title='Comparison Based on Revenue'
+            for i in range(len(bar_labels)):
+                chart.add(bar_labels[i],(bar_values[i]))
+            graph = chart.render_data_uri()
+            return render_template('corporate_ekart.html', form=form, data=data, title='Ekart',show_graph=True, graph = graph)
         data =load_products(form.radio.data)
-    return render_template('corporate_ekart.html', form=form, data=data, title='Ekart')
+    return render_template('corporate_ekart.html', form=form, data=data, title='Ekart',show_graph=False)
 
 @app.errorhandler(404)
 def page_not_found(error):
     return render_template('404.html'),404
 
-# if __name__ == '__main__':
-#     app.run(debug=True)
+if __name__ == '__main__':
+    app.run(debug=True)

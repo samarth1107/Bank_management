@@ -1,13 +1,22 @@
 {% extends "layout_company.html" %}
 {% block content %}
 
+{% if show_graph %}
 <div class="container-fluid">
-<div class="page-header">
-  <h1>Your Door-Step Delivery Store</h1>
+    <div class="row">
+        <div class="container">
+            <embed type="image/svg+xml" src={{graph|safe}} style='max-width:2000px'/>
+        </div>
+      </div>
 </div>
+{% else %}
+<div class="container-fluid">
 
 <div class="content-section">
-  <form method="POST" action="">
+  <div class="row">
+      <div class="container">
+        <h1>Your Door-Step Delivery Store</h1>
+    <form method="POST" action="">
       {{ form.hidden_tag() }}
       <fieldset class="form-group">
           <legend class="border-bottom mb-4">Products</legend>
@@ -22,40 +31,40 @@
                   </tr>
               {% endfor%}
           </div>
-          <table style="width: 100%">
-              <tr>
-                  <th>SELLER ID</th>
-                  <th>PRODUCT ID</th>
-                  <th>PRODUCT NAME</th>
-                  <th>CATEGORY</th>
-                  <th>PRICE</th>
-              </tr> 
-              {% for record in data %}
-              <tr>
-                  {% for val in record %}
-                  <td>
-                      {{ val }}
-                  </td>
-                  {% endfor %}
-              </tr>
-              {% endfor %}
-          </table>
+
+          <div class="form-group">
+            {{ form.submit(class="btn btn-outline-info") }}
+          </div>
           
-          
-
-
-
-
       </fieldset>
-
-      <div class="form-group">
-          {{ form.submit(class="btn btn-outline-info") }}
-      </div>
-
-
-
   </form>
+  </div>
+  </div>
+
+  <div class="row">
+      <div class="container-fluid">
+        <table style="width: 100%">
+            <tr>
+                <th>SELLER ID</th>
+                <th>PRODUCT ID</th>
+                <th>PRODUCT NAME</th>
+                <th>CATEGORY</th>
+                <th>PRICE</th>
+            </tr> 
+            {% for record in data %}
+            <tr>
+                {% for val in record %}
+                <td>
+                    {{ val }}
+                </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </table>
+      </div>
+  </div>
 </div>
 </div>
+{% endif %}
 
 {% endblock content %}

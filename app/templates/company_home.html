@@ -5,9 +5,61 @@
     <p>{{ message }}</p>
     {% endif %}
 
-    <div class="page-header">
-        <h1>{{current_user.name}}</h1>
-    </div>
+    <div class="container">
+        <div class="row d-flex justify-content-between ">
+          <div class="col-md-12">
+            <div class="page-header">
+                <h1>welcome to Monergize web portal</h1>
+            </div>
+        
+            <!-- ======= Services Section ======= -->
+            <section id="services" class="services section-bg">
+              <div class="container">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div class="row">
+                      <div class="col-md-4 d-flex align-items-stretch">
+                        <div class="icon-box" data-aos="zoom-in" data-aos-delay="100">
+                          <div class="icon"><i class="bx bx-file"></i></div>
+                          <h4><a href="{{ url_for('company_performance')}}">Company comparision</a></h4>
+                          <h5>To compare yourself with other registered companyies</h5>
+                        </div>
+                      </div>
+        
+                      <div class="col-md-4 d-flex align-items-stretch mt-4 mt-lg-0">
+                        <div class="icon-box" data-aos="zoom-in" data-aos-delay="100">
+                          <div class="icon"><i class="bx bx-file"></i></div>
+                          <h4><a href="{{ url_for('mnc_pay')}}">Expenditure</a></h4>
+                          <h5>To pay MNCs fees</h5>
+                        </div>
+                      </div>
+        
+                      <div class="col-md-4 d-flex align-items-stretch mt-4">
+                        <div class="icon-box" data-aos="zoom-in" data-aos-delay="300">
+                          <div class="icon"><i class="bx bx-world"></i></div>
+                          <h4><a href="{{url_for('corporate_payment')}}">Payment Portal</a></h4>
+                          <h5>To pay corporate payments</h5>
+                        </div>
+                      </div>
+        
+                      <div class="col-md-4 d-flex align-items-stretch mt-4">
+                        <div class="icon-box" data-aos="zoom-in" data-aos-delay="400">
+                          <div class="icon"><i class="bx bx-world"></i></div>
+                          <h4><a href="{{url_for('ekart')}}">Ekart</a></h4>
+                          <h5>To know about products</h5>
+                        </div>
+                      </div>
+        
+                    </div>
+                  </div>
+                </div>
+        
+              </div>
+            </section><!-- End Services Section -->
+          </div>
+        
+        </div>
+        </div>
 
     
 {% endblock content %}

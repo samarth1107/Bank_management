@@ -1,58 +1,284 @@
-{% extends "layout_company.html" %}
+{% extends "layout_copy.html" %}
 {% block content %}
-
+{% if bar_graph %}
 <div class="container-fluid">
-  <div class="row m-1 bg-light round_border_small m-1">
+    <div class="row">
+        <div class="container">
+            <embed type="image/svg+xml" src={{graph|safe}} style='max-width:2000px'/>
+        </div>
+      </div>
+</div>
+{% else %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- TradingView Widget BEGIN -->
+<div class="tradingview-widget-container">
+    <div class="tradingview-widget-container__widget"></div>
+    <div class="tradingview-widget-copyright"><a href="https://in.tradingview.com" rel="noopener" target="_blank"><span class="blue-text">Ticker Tape</span></a> by TradingView</div>
+    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+    {
+    "symbols": [
+      {
+        "proName": "FOREXCOM:SPXUSD",
+        "title": "S&P 500"
+      },
+      {
+        "proName": "FOREXCOM:NSXUSD",
+        "title": "Nasdaq 100"
+      },
+      {
+        "proName": "FX_IDC:EURUSD",
+        "title": "EUR/USD"
+      },
+      {
+        "proName": "BITSTAMP:BTCUSD",
+        "title": "BTC/USD"
+      },
+      {
+        "proName": "BITSTAMP:ETHUSD",
+        "title": "ETH/USD"
+      }
+    ],
+    "colorTheme": "light",
+    "isTransparent": false,
+    "displayMode": "adaptive",
+    "locale": "in"
+  }
+    </script>
+    <br>
+  </div>
+  <!-- TradingView Widget END -->
+    </div>
+  <div class="row">
     <form method="POST" action="">
             {{ form.hidden_tag() }}
-            <fieldset class="form-group">
-                <legend class="border-bottom mb-4 text-center">Registered company stock data</legend>
-                
-                <div class="form-group text-center">
-                    {{ form.radio.label(class = "form-control-label") }}
-                    {% for choice in form.radio %}
-                        <tr>
-                            <td>{{ choice }}</td>
-                            <td>{{ choice.label }}</td>
-                        </tr>
-                    {% endfor%}
+            <div class="row">
+                <div class="container">
+                    <fieldset class="form-group border m-5">
+                        <legend class="border-bottom mb-4 text-center">Registered company stock data</legend>
+
+                        <div class="form-group text-center">
+                            {{ form.radio.label(class = "form-control-label") }}
+                            {% for choice in form.radio %}
+                                <tr>
+                                    <td>{{ choice }}</td>
+                                    <td>{{ choice.label }}</td>
+                                </tr>
+                            {% endfor%}
+                            
+                        </div>
+                        <div class="form-group text-center">
+                            {{ form.submit(class="btn btn-primary") }}
+                        </div>   
+                        <div class="form-group text-center">
+                            <!-- <a href="{{url_for('banks_bar')}}" class="btn btn-primary mx-auto my-2">See graph</a> -->
+                            <input class="btn btn-primary" id="submit" name="submit" type="submit" value="See graph">
+                        </div>              
+                    </fieldset>  
+                </div>  
+            </div>
+            <div class="row">
+                <div class="container-fluid">
+                    <table style="width:100%" class="">
+                        <tr class="border_small">
+                            <th class="text-center">ID</th>
+                            <th class="text-center">NAME</th>
+                            <th class="text-center">PE Ratio</th>
+                            <th class="text-center">Quick Ratio</th>
+                            <th class="text-center">Acc Payable</th>
+                            <th class="text-center">Acc Receivable</th>
+                            <th class="text-center">EPS</th>
+                            <th class="text-center">Market Value</th>
+                            <th class="text-center">Book Value</th>
+                            <th class="text-center">Total Assets</th>
+                            <th class="text-center">Total Liabilities</th>
+                            <th class="text-center">Inventories</th>
+                            <th class="text-center">External Fundings</th>
+                            <th class="text-center">Retained Earnings</th>
+                        </tr> 
                     
-                </div>
-                <div class="form-group text-center">
-                    {{ form.submit(class="btn btn-outline-info") }}
-                </div>
-                <table style="width: 100%" class="m-3">
-                    <tr class="border_small">
-                        <th class="text-center">ID</th>
-                        <th class="vl text-center">NAME</th>
-                        <th class="vl text-center">PE Ratio</th>
-                        <th class="vl text-center">Quick Ratio</th>
-                        <th class="vl text-center">Acc Payable</th>
-                        <th class="vl text-center">Acc Receivable</th>
-                        <th class="vl text-center">EPS</th>
-                        <th class="vl text-center">Market Value</th>
-                        <th class="vl text-center">Book Value</th>
-                        <th class="vl text-center">Total Assets</th>
-                        <th class="vl text-center">Total Liabilities</th>
-                        <th class="vl text-center">Inventories</th>
-                        <th class="vl text-center">External Fundings</th>
-                        <th class="vl text-center">Retained Earnings</th>
-                    </tr> 
-
-                    {% for record in data %}
-                    <tr>
-                        {% for val in record %}
-                        <td class="vl rl text-center">
-                            {{ val }}
-                        </td>
+                        {% for record in data %}
+                        <tr>
+                            {% for val in record %}
+                            <td class="text-center">
+                                {{ val }}
+                            </td>
+                            {% endfor %}
+                        </tr>
                         {% endfor %}
-                    </tr>
-                    {% endfor %}
-                </table>
-            </fieldset>    
-
+                    </table>
+                </div>
+            </div>
     </form>
+    </div>
+    <div class="row my-5">
+        <div class="col-md-3.5 d-flex align-items-stretch">
+        <!-- TradingView Widget BEGIN -->
+        <div class="tradingview-widget-container">
+    
+    <h3>International Market</h3>
+    <div class="tradingview-widget-container__widget"></div>
+    <div class="tradingview-widget-copyright"><a href="https://in.tradingview.com" rel="noopener" target="_blank"><span class="blue-text">Market Data</span></a> by TradingView</div>
+    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
+    {
+    "colorTheme": "light",
+    "dateRange": "12m",
+    "showChart": true,
+    "locale": "in",
+    "largeChartUrl": "",
+    "isTransparent": false,
+    "width": "400",
+    "height": "660",
+    "plotLineColorGrowing": "rgba(33, 150, 243, 1)",
+    "plotLineColorFalling": "rgba(33, 150, 243, 1)",
+    "gridLineColor": "rgba(240, 243, 250, 1)",
+    "scaleFontColor": "rgba(120, 123, 134, 1)",
+    "belowLineFillColorGrowing": "rgba(33, 150, 243, 0.12)",
+    "belowLineFillColorFalling": "rgba(33, 150, 243, 0.12)",
+    "symbolActiveColor": "rgba(33, 150, 243, 0.12)",
+    "tabs": [
+      {
+        "title": "Indices",
+        "symbols": [
+          {
+            "s": "FOREXCOM:SPXUSD",
+            "d": "S&P 500"
+          },
+          {
+            "s": "FOREXCOM:NSXUSD",
+            "d": "Nasdaq 100"
+          },
+          {
+            "s": "FOREXCOM:DJI",
+            "d": "Dow 30"
+          },
+          {
+            "s": "INDEX:NKY",
+            "d": "Nikkei 225"
+          },
+          {
+            "s": "INDEX:DEU30",
+            "d": "DAX Index"
+          },
+          {
+            "s": "FOREXCOM:UKXGBP",
+            "d": "FTSE 100"
+          }
+        ],
+        "originalTitle": "Indices"
+      },
+      {
+        "title": "Commodities",
+        "symbols": [
+          {
+            "s": "CME_MINI:ES1!",
+            "d": "E-Mini S&P"
+          },
+          {
+            "s": "CME:6E1!",
+            "d": "Euro"
+          },
+          {
+            "s": "COMEX:GC1!",
+            "d": "Gold"
+          },
+          {
+            "s": "NYMEX:CL1!",
+            "d": "Crude Oil"
+          },
+          {
+            "s": "NYMEX:NG1!",
+            "d": "Natural Gas"
+          },
+          {
+            "s": "CBOT:ZC1!",
+            "d": "Corn"
+          }
+        ],
+        "originalTitle": "Commodities"
+      },
+      {
+        "title": "Bonds",
+        "symbols": [
+          {
+            "s": "CME:GE1!",
+            "d": "Eurodollar"
+          },
+          {
+            "s": "CBOT:ZB1!",
+            "d": "T-Bond"
+          },
+          {
+            "s": "CBOT:UB1!",
+            "d": "Ultra T-Bond"
+          },
+          {
+            "s": "EUREX:FGBL1!",
+            "d": "Euro Bund"
+          },
+          {
+            "s": "EUREX:FBTP1!",
+            "d": "Euro BTP"
+          },
+          {
+            "s": "EUREX:FGBM1!",
+            "d": "Euro BOBL"
+          }
+        ],
+        "originalTitle": "Bonds"
+      },
+      {
+        "title": "Forex",
+        "symbols": [
+          {
+            "s": "FX:EURUSD"
+          },
+          {
+            "s": "FX:GBPUSD"
+          },
+          {
+            "s": "FX:USDJPY"
+          },
+          {
+            "s": "FX:USDCHF"
+          },
+          {
+            "s": "FX:AUDUSD"
+          },
+          {
+            "s": "FX:USDCAD"
+          }
+        ],
+        "originalTitle": "Forex"
+      }
+    ]
+  }
+    </script>
+        </div>
+        <!-- TradingView Widget END -->
+        </div>
+        <div class="col-md-8.5 d-flex align-items-stretch">
+            <!-- TradingView Widget BEGIN -->
+  <div class="tradingview-widget-container">
+      <h3>Cryptocurrency Data</h3>
+      <div class="tradingview-widget-container__widget"></div>
+      <div class="tradingview-widget-copyright"><a href="https://in.tradingview.com/markets/cryptocurrencies/prices-all/" rel="noopener" target="_blank"><span class="blue-text">Cryptocurrency Markets</span></a> by TradingView</div>
+      <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-screener.js" async>
+      {
+      "width": 1000,
+      "height": 490,
+      "defaultColumn": "overview",
+      "screener_type": "crypto_mkt",
+      "displayCurrency": "USD",
+      "colorTheme": "light",
+      "locale": "in"
+    }
+      </script>
+    </div>
+    <!-- TradingView Widget END -->
+      </div>
+    </div>
+    
 </div>
-</div>
-
+{% endif %}
 {% endblock content %}
