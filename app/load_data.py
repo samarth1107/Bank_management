@@ -388,6 +388,7 @@ def bank_recc(val):
         return data
 
 def load_market_data(para):
+    data=0
     if para =="pe_ratio":
         cur = mysql.connection.cursor()
         cur.execute("SELECT * FROM bank.company_market_detail ORDER BY pe_ratio")

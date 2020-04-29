@@ -104,11 +104,57 @@
         </div>          
       </p>
 
+      <p class="content-section">
+      <div class="card bg-dark text-light">
+        <div class="card-body" data-aos="zoom-in" data-aos-delay="100">
+          <h5 class="card-title">Pay your loan emi</h5>
+          <p class="card-text">Pay your EMI regularly to avoid fine charges</p>
+          <a href="{{url_for('debit')}}" class="btn btn-primary mx-auto my-2">Make Payment</a>
+        </div>
+      </div> 
+      </p> 
+
       <div class="icon-box" data-aos="zoom-in" data-aos-delay="300">
         <img src="../static/css/Logo.jpeg" height="200"class="mx-auto img-circle">
       </div>
     </div>
   </div>
 </div>
+</div>
+
+<div class="tradingview-widget-container">
+  <div class="tradingview-widget-container__widget"></div>
+  <div class="tradingview-widget-copyright"><a href="https://in.tradingview.com" rel="noopener" target="_blank"><span class="blue-text">Ticker Tape</span></a> by TradingView</div>
+  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+  {
+  "symbols": [
+    {
+      "proName": "FOREXCOM:SPXUSD",
+      "title": "S&P 500"
+    },
+    {
+      "proName": "FOREXCOM:NSXUSD",
+      "title": "Nasdaq 100"
+    },
+    {
+      "proName": "FX_IDC:EURUSD",
+      "title": "EUR/USD"
+    },
+    {
+      "proName": "BITSTAMP:BTCUSD",
+      "title": "BTC/USD"
+    },
+    {
+      "proName": "BITSTAMP:ETHUSD",
+      "title": "ETH/USD"
+    }
+  ],
+  "colorTheme": "light",
+  "isTransparent": false,
+  "displayMode": "adaptive",
+  "locale": "in"
+}
+  </script>
+  <br>
 </div>
 {% endblock content %}

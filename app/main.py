@@ -393,22 +393,9 @@ def banks_performance():
     data =  bank_recc(0)
     form = BankPrefForm()
     if form.validate_on_submit():
-        data = bank_recc(form.radio.data)
-    statements = []
-    for entry in data:
-        statements.append(list(entry.values()))
-    data=statements
-    return render_template('Bank_performance.html', form=form, data=data, title='Bank Performance')
-
-@app.route("/stock", methods=['GET', 'POST'])
-@login_required
-def stock_comparision():
-    data = load_market_data('pe_ratio')
-    form = StockForm()
-    try:
-        if('See graph' in request.form['submit']):
-            print('making graph')
+        if(form.radio.data=='graph'):
             data=bank_recc('graph')
+            print(data)
             bar_labels=[]
             bar_values=[]
             for j in data:
@@ -419,17 +406,55 @@ def stock_comparision():
             for i in range(len(bar_labels)):
                 chart.add(bar_labels[i],(bar_values[i]))
             graph = chart.render_data_uri()
-            return render_template('stock_performance.html', form=form, data=data, title='Stocks', bar_graph=True, graph=graph)
-    except:
-        pass
-        
-    if form.validate_on_submit():
-        data = load_market_data(form.radio.data)
+            return render_template('Bank_performance.html', form=form, data=data, title='Bank Performance',show_graph=True,graph=graph)
+        data = bank_recc(form.radio.data)
     statements = []
     for entry in data:
         statements.append(list(entry.values()))
     data=statements
-    return render_template('stock_performance.html', form=form, data=data, title='Stocks', bar_graph=False)
+    return render_template('Bank_performance.html', form=form, data=data, title='Bank Performance',show_graph=False)
+
+@app.route("/stock", methods=['GET', 'POST'])
+@login_required
+def stock_comparision():
+    data = load_market_data('company_name')
+    form = StockForm()
+    if form.validate_on_submit():
+        data = load_market_data('company_name')
+        if(form.radio.data=='graph1'):
+            data=load_market_data('company_name')
+            bar_labels=[]
+            bar_values=[]
+            for j in data:
+                bar_labels.append(j['company_name'])
+                bar_values.append(j['pe_ratio'])
+            chart = pygal.Bar(width=1200, height=700,spacing=100,explicit_size=True)
+            chart.title='Price-to-Earnings Ratio Comparison'            
+            for i in range(len(bar_labels)):
+                chart.add(bar_labels[i],(bar_values[i]))
+            graph = chart.render_data_uri()
+            return render_template('stock_performance.html', form=form, data=data, bar_graph=True, graph=graph, title="Live Stocks")
+        elif(form.radio.data=='graph2'):
+            data=load_market_data('company_name')
+            bar_labels=[]
+            bar_values=[]
+            for j in data:
+                bar_labels.append(j['company_name'])
+                bar_values.append(j['eps'])
+            chart = pygal.Bar(width=1200, height=700,spacing=100,explicit_size=True)
+            chart.title='Earnings-per-Share Ratio Comparison'
+            for i in range(len(bar_labels)):
+                chart.add(bar_labels[i],(bar_values[i]))
+            graph = chart.render_data_uri()
+            return render_template('stock_performance.html', form=form, data=data, bar_graph=True, graph=graph, title="Live Stocks")
+        else:
+            data = load_market_data(form.radio.data)
+            statements = []
+            for entry in data:
+                statements.append(list(entry.values()))
+                data=statements
+            return render_template('stock_performance.html', form=form, data=data, bar_graph=False, title="Live Stocks")
+    return render_template('stock_performance.html', form=form, data=data, bar_graph=False, title="Live Stocks")
 
 
 @app.route("/corporate/perform", methods=['GET', 'POST'])
@@ -480,7 +505,6 @@ def ekart():
     if form.validate_on_submit():
         if(form.radio.data=='graph'):
             data=load_products('graph')
-            print(data)
             bar_labels=[]
             bar_values=[]
             for j in data:
