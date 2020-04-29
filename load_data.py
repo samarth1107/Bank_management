@@ -7,13 +7,14 @@ from datetime import datetime
 class User(UserMixin):
 
     def __repr__(self):
-        return f"User('{self.id}', '{self.email}', '{self.password}', '{self.name}', '{self.account_no}', '{self.balance}', '{self.PIN}')"
+        return f"User('{self.id}', '{self.email}', '{self.password}', '{self.name}', '{self.bank_id}','{self.account_no}', '{self.balance}', '{self.PIN}')"
 
     def __init__(self, id):
         user_data,bank_detail,employee_detail = request_User_detail(id)
         self.id = id
         self.email = user_data['email']        
         self.name = user_data['name']
+        self.bank_id = bank_detail['bank_id']
         self.account_no = bank_detail['account_no']
         self.balance = bank_detail['account_balance']
         self.PIN = bank_detail['account_pin']
@@ -37,6 +38,7 @@ class Company(UserMixin):
         data = request_Compnay_detail(id)
         self.id=data['comp_id']
         self.name=data['company_name']
+
 def Verify_user(email, password):
     cur = mysql.connection.cursor()
     cur.execute("SELECT Customer_id,email,password FROM bank.customer_login_detail;")
@@ -163,13 +165,13 @@ def insert_user(user_detail):
     cur = mysql.connection.cursor()
     cur.execute("SELECT MAX(CUSTOMER_ID) FROM bank.customer_personal_detail")
     id_val = int(cur.fetchone()['MAX(CUSTOMER_ID)'])+1
-    cur.execute("INSERT INTO bank.customer_personal_detail VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", [id_val, user_detail[0], user_detail[1], user_detail[2], user_detail[3], user_detail[4], user_detail[5], user_detail[6], user_detail[7], user_detail[8], user_detail[9], user_detail[10], user_detail[11]])
+    cur.execute("INSERT INTO bank.customer_personal_detail VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);", [id_val, user_detail[0], user_detail[1], user_detail[2], user_detail[3], user_detail[4], user_detail[5], user_detail[6], user_detail[7], user_detail[8], user_detail[9], user_detail[10], user_detail[11]])
     mysql.connection.commit()
     cur.close()
 
-def enquire_loan(type,principal,period):
+def enquire_loan(type,principal,period, bank_id):
     cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM bank.bank_loan_detail WHERE loan_type=%s AND max_period>%s;",[str(type),int(period)])
+    cur.execute("SELECT * FROM bank.bank_loan_detail WHERE loan_type=%s AND max_period>%s AND bank_id=%s;",[str(type),int(period),str(bank_id)])
     loan_details = cur.fetchall()
     cur.close()
     if len(loan_details)>0:
@@ -183,7 +185,93 @@ def enquire_loan(type,principal,period):
         for entry in loan_details:
             data_loan.append(list(entry.values()))
         return data_loan,EMI
-    else: return False,False
+    else: return False,
+    
+def insert_data_into_temporary_table(data,principal,max_period):
+    cur = mysql.connection.cursor()
+    for row in range(len(data)):
+        cur.execute("INSERT INTO bank.loan_table VALUES(%s, %s, %s);",[data[row][0],principal,max_period])
+        mysql.connection.commit()
+    cur.close()
+    return True
+
+def apply_loan(Customer_id,loan_id):
+    cur = mysql.connection.cursor()
+    cur.execute("Select MAX(application_id) from bank.loan_application_data;")
+    application = int(cur.fetchone()['MAX(application_id)'])+1
+    cur.execute("Select * from bank.loan_table WHERE Loan_ID = %s;",[loan_id])
+    data = cur.fetchone()
+    cur.execute("Insert INTO bank.loan_application_data values(%s,%s,%s,'PENDING',%s,%s);",[int(application),int(loan_id),int(Customer_id),int(data['principal']),int(data['max_period'])])
+    mysql.connection.commit()
+    cur.execute("DELETE from bank.loan_table WHERE Loan_ID>0;")
+    mysql.connection.commit()
+    cur.execute("UPDATE bank.customer_bank_details SET loan_status = 'PENDING' WHERE (application_id = %s);",[(Customer_id)])
+    cur.close()
+    return
+
+def delete_all_row():
+    cur = mysql.connection.cursor()
+    cur.execute("DELETE from bank.loan_table WHERE Loan_ID>0;")
+    mysql.connection.commit()
+    cur.close()
+    return
+
+def current_loan(Customer_ID):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM bank.loan_application_data l LEFT JOIN bank_loan_detail b ON l.Loan_id=b.loan_id WHERE l.Customer_id=%s;",[Customer_ID])
+    data = cur.fetchall()
+    cur.close()
+    return data
+
+def pay_emi_current_loan(user_id, application,account_no,bankid):
+    cur = mysql.connection.cursor()
+    data = current_loan(user_id)
+    emi=0
+    for loan in data:
+        print(loan)
+        if int(loan['application_id'])==int(application):
+            emi=loan['principal']/loan['max_period']
+            print(loan)
+            break
+        
+    cur.execute("UPDATE bank.customer_bank_details SET account_balance = (account_balance - %s) WHERE account_no = %s;",[int(emi),str(account_no)])
+    update_user_summary(account_no,emi,"Debited","EMI")
+    mysql.connection.commit()
+
+    cur.execute("SELECT total_assets FROM bank.bank WHERE bank_id=%s;",[str(bankid)])
+    account_balance=cur.fetchone()['total_assets']
+    cur.execute("UPDATE bank.bank SET total_assets = (%s) WHERE bank_id = %s;",[int(emi+account_balance),str(bankid)])
+    mysql.connection.commit()   
+
+    cur.execute("SELECT emi_paid FROM bank.loan_application_data WHERE application_id=%s;",[str(application)])
+    emi_paid=cur.fetchone()['emi_paid']
+    cur.execute("UPDATE bank.loan_application_data SET emi_paid = (%s) WHERE application_id = %s;",[int(emi_paid+1),str(application)])
+    mysql.connection.commit()   
+
+    cur.close()
+    return True
+
+def accept_loan(application_id):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT l.principal,l.max_period,b.interest,b.bank_id FROM bank.loan_application_data l LEFT JOIN bank.bank_loan_detail b ON l.Loan_id = b.loan_id WHERE l.application_id=%s;",[int(application_id)])
+    details=cur.fetchone()
+    interest_amount=(details['principal']*details['max_period']*details['interest'])/100
+    cur.execute("UPDATE bank.loan_application_data SET Status = 'ACCEPTED', principal = %s, start_time=%s, emi_paid='0' WHERE (application_id = %s);",[int(details['principal']+interest_amount),str(datetime.now().strftime("%Y-%m-%d")),int(application_id)])
+    mysql.connection.commit()
+
+    cur.execute("SELECT total_assets FROM bank.bank WHERE bank_id=%s;",[str(details['bank_id'])])
+    account_balance=cur.fetchone()['total_assets']
+    cur.execute("UPDATE bank.bank SET total_assets = %s WHERE (bank_id = %s);",[int(account_balance-details['principal']),str(details['bank_id'])])
+    cur.close()
+    return True
+
+def reject_loan(application_id):
+    cur = mysql.connection.cursor()
+    cur.execute("UPDATE bank.loan_application_data SET Status = 'REJECTED' WHERE (application_id = %s);",[int(application_id)])
+    mysql.connection.commit()
+    cur.close()
+    return True
+   
 
 def request_customerlist(bankid, term, column):
     cur = mysql.connection.cursor()
@@ -251,7 +339,6 @@ def search_loan_application(status, bank_id):
         if loans==None or len(loans)==0:
             return -1
         else:return loans
-
 
 def request_customer_detail(term):
     cur = mysql.connection.cursor()

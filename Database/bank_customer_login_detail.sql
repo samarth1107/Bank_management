@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `bank` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `bank`;
 -- MySQL dump 10.13  Distrib 8.0.19, for Win64 (x86_64)
 --
 -- Host: localhost    Database: bank
@@ -24,8 +26,8 @@ DROP TABLE IF EXISTS `customer_login_detail`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `customer_login_detail` (
   `Customer_id` int NOT NULL,
-  `email` varchar(50) COLLATE utf8_bin NOT NULL,
-  `password` varchar(50) COLLATE utf8_bin NOT NULL,
+  `email` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `password` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`Customer_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -49,4 +51,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-04-27 23:29:57
+-- Dump completed on 2020-04-28 12:13:53

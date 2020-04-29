@@ -1,13 +1,104 @@
-{% extends "layout.html" %}
+{% extends "layout_copy.html" %}
 {% block content %}
-    
-    {% if message %}
-    <p>{{ message }}</p>
-    {% endif %}
 
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+{% if message %}
+<p>{{ message }}</p>
+{% endif %}
+
+
+<div class="container">
+<div class="row d-flex justify-content-between ">
+  <div class="col-md-8">
     <div class="page-header">
-        <h1>Home Page</h1>
+        <h1>{{current_user.name}} Welcome to Monergize web portal</h1>
     </div>
 
-    
+    <!-- ======= Services Section ======= -->
+    <section id="services" class="services section-bg">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="row">
+              <div class="col-md-6 d-flex align-items-stretch">
+                <div class="icon-box" data-aos="zoom-in" data-aos-delay="100">
+                  <div class="icon"><i class="bx bx-file"></i></div>
+                  <h4><a href="{{ url_for('summary')}}">Passbook</a></h4>
+                  <h5>Current balance </h5><span data-toggle="counter-up">{{current_user.balance}}</span>
+                  <p>To know statement or previous transactions</p>
+                </div>
+              </div>
+
+              <div class="col-md-6 d-flex align-items-stretch mt-4 mt-lg-0">
+                <div class="icon-box" data-aos="zoom-in" data-aos-delay="100">
+                  <div class="icon"><i class="bx bx-file"></i></div>
+                  <h4><a href="{{ url_for('account')}}">Account Info</a></h4>
+                  <h5>ID : {{current_user.id}}</h5>
+                  <p>To know more bank, employeement info</p>
+                </div>
+              </div>
+
+              <div class="col-md-6 d-flex align-items-stretch mt-4">
+                <div class="icon-box" data-aos="zoom-in" data-aos-delay="300">
+                  <div class="icon"><i class="bx bx-world"></i></div>
+                  <h4><a href="{{url_for('current_loans')}}">Loan application</a></h4>
+                  <h5>Loan : {{loan}}</h5>
+                  <p>To see your loan application current status or to pay EMI</p>
+                </div>
+              </div>
+
+              <div class="col-md-6 d-flex align-items-stretch mt-4">
+                <div class="icon-box" data-aos="zoom-in" data-aos-delay="400">
+                  <div class="icon"><i class="bx bx-world"></i></div>
+                  <h4><a href="{{url_for('loan_enquire')}}">Loan Enquiry</a></h4>
+                  <h5></h5>
+                  <p>To know more about loans in the market</p>
+                </div>
+              </div>
+
+              <div class="col-md-6 d-flex align-items-stretch mt-4">
+                <div class="icon-box" data-aos="zoom-in" data-aos-delay="300">
+                  <div class="icon"><i class="bx bx-tachometer"></i></div>
+                  <h4><a href="{{url_for('banks_performance')}}">Bank performance</a></h4>
+                  <h5>Change current bank</h5>
+                  <p>To change your current bank you first need to clear loans from current bank</p>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section><!-- End Services Section -->
+  </div>
+
+  <div class="col-md-3 m-1">
+    <div class="content-section">
+      <p class='text-muted'>    
+        <div class="card bg-dark text-light">
+          <div class="card-body" data-aos="zoom-in" data-aos-delay="100">
+            <h5 class="card-title">Account Number : {{current_user.account_no}}</h5>
+            <p class="card-text">To accept payment share the code above or scan below</p>
+            <img src="../static/css/myqr.png" alt="Logo" class="sealImage ml-1" height="200">
+            <a href="{{url_for('debit')}}" class="btn btn-primary mx-auto my-2">Make Payment</a>
+          </div>
+        </div>          
+      </p>
+
+      <div class="icon-box" data-aos="zoom-in" data-aos-delay="300">
+        <img src="../static/css/Logo.jpeg" height="200"class="mx-auto img-circle">
+      </div>
+    </div>
+  </div>
+</div>
+</div>
 {% endblock content %}

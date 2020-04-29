@@ -1,10 +1,10 @@
-{% extends "layout.html" %}
+{% extends "layout_copy.html" %}
 {% block content %}
 
-<div class="container">
+<div class="container" data-aos="zoom-in" data-aos-delay="100">
     
         <div class="row">
-            <div class="col-md-12 m-1 p-4 round_border bg-light">
+            <div class="col-md-12 m-1 p-4 bg-white rounded border border-dark">
                 <h3>Account section</h3>
                 <h1 class="account-heading">{{user_name}}</h1>
                 <h3>ID {{user_id}}</h3>
@@ -12,43 +12,41 @@
         </div>
 
         <div class="row-md m-1">
-            <div class="round_border bg-light">   
-                <div class="p-4">         
+                <div class="p-4 bg-white rounded border border-dark">         
                     <h4>Bank Details</h4>
                     <p>Bank ID : {{bank_detail[0]}}</p>
                     <p>Bank Name : {{bank_detail[1]}}</p>
                     <p>Account Number: {{bank_detail[2]}}</p>
                     <p>Account Balance : {{bank_detail[3]}}</p>
                 </div>
-            </div>
         </div>
 
-        <div class="row round_border bg-light">
-            <div class="col-md-1  text-center py-3 border rounded">
+        <div class="row">
+            <div class="col-md-1 text-center py-3 bg-white rounded border border-dark">
                 <h4>S.</h4>
             </div>
-            <div class="col-md-1  text-center py-3 pl-1 border rounded">
+            <div class="col-md-1 text-center py-3 pl-1 bg-white rounded border border-dark">
                 <h4>D/C</h4>
             </div>
-            <div class="col-md-2  text-center py-3 border rounded">
+            <div class="col-md-2 text-center py-3 bg-white rounded border border-dark">
                 <h4>Source</h4>
             </div>    
-            <div class="col-md-2  text-center py-3 border rounded">
+            <div class="col-md-2  text-center py-3 bg-white rounded border border-dark">
                 <h4>Amount</h4>
             </div> 
-            <div class="col-md-2  text-center py-3 border rounded">
+            <div class="col-md-2  text-center py-3 bg-white rounded border border-dark">
                 <h4>Date</h4>
             </div> 
-            <div class="col-md-2  text-center py-3 border rounded">
+            <div class="col-md-2  text-center py-3 bg-white rounded border border-dark">
                 <h4>Time</h4>
             </div> 
-            <div class="col-md-2  text-center py-3 border rounded">
+            <div class="col-md-2  text-center py-3 bg-white rounded border border-dark">
                 <h4>Balance</h4>
             </div>         
         </div>
 
         {%for each_statement in summary%}
-            <div class="row m-1 round_border_small bg-light">
+            <div class="row m-1 bg-light rounded border border-dark">
                 <div class="col-md-1  text-center py-3  ">
                     <p>{{each_statement[1]}}</p>
                 </div>

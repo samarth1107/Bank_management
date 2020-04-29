@@ -1,13 +1,14 @@
-{% extends "layout.html" %}
+{% extends "layout_copy.html" %}
 {% block content %}
-<div class="row-fluid">
-    <div class="span12 m-1 p-4 round_border bg-light">
+<div class="container" data-aos="zoom-in" data-aos-delay="100">
+<div class="row-fluid ">
+    <div class="span12 m-1 p-4 bg-white rounded border border-dark">
         <h3>Account section</h3>
         <h1 class="account-heading">{{user_data[1]}}</h1>
         <h3>ID {{user_data[0]}}</h3>
     </div>
 
-    <div class="span12 m-1 round_border bg-light">
+    <div class="span12 m-1 bg-white rounded border border-dark">
         <div class="border rounded">   
             <div class="p-4">         
                 <h4>Personal details</h4>
@@ -23,7 +24,7 @@
         </div>
     </div>
 
-    <div class="span12 m-1 round_border bg-light">
+    <div class="span12 m-1 bg-white rounded border border-dark">
         <div class="border rounded">   
             <div class="p-4">         
                 <h4>Bank Details</h4>
@@ -35,7 +36,7 @@
         </div>
     </div>
 
-    <div class="span12 m-1 round_border bg-light">
+    <div class="span12 m-1 bg-white rounded border border-dark">
         <div class="border rounded">   
             <div class="p-4">         
                 <h4>Employment Details</h4>
@@ -47,5 +48,6 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 {% endblock content %}

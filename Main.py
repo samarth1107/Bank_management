@@ -1,16 +1,19 @@
 from flask import Flask,render_template,url_for,flash,redirect,request
 from flask_mysqldb import MySQL
 from flask_login import LoginManager,login_user,current_user,logout_user,login_required
-#from form import LoginForm, DebitForm, RegisterForm, Loan_enquiryForm, Bank_LoginForm, Search_customer, ADD_loan, submitbutton, Company_LoginForm, BankPrefForm, StockForm, PerformanceForm, MNCPayForm
 from form import *
 from load_data import *
-#import load_data
+import pyqrcode 
+import png 
+from pyqrcode import QRCode
+import re
+import os
 
 
 app = Flask(__name__ ,template_folder='templates' , static_folder='static')
 app.config['SECRET_KEY'] = '5791628bpowerb0b13ce0c676dfde280ba245'
 
-app.config['MYSQL_HOST']='10.0.0.7'
+app.config['MYSQL_HOST']='localhost'
 app.config['MYSQL_USER']='root'
 app.config['MYSQL_PASSWORD']='1107'
 app.config['MYSQL_DB']='bank'
@@ -35,8 +38,14 @@ def hello():
     return render_template('Main_home.html',title="Home page")
 
 @app.route("/home")
+@login_required
 def home():
-    return render_template('home.html',title="Home page 2")
+    data = current_loan(current_user.id)
+    if len(data)>0:
+        for loans in data:
+            if loans['Status']=='ACCEPTED':
+                loans['Status']=True
+    return render_template('home.html',title="Home page",loan=len(data))
 
 @app.route("/about")
 def about():
@@ -68,11 +77,13 @@ def login():
             if form.remember.data:login_user(User(verify_user), remember=True)
             else:login_user(User(verify_user),remember=False)
             next_page = request.args.get('next')
+            url = pyqrcode.create("http://127.0.0.1:5000/debit/"+current_user.account_no) 
+            url.png('static/css/myqr.png', scale = 6)
             flash('Logged in successfully', 'success')
             return redirect(next_page) if(next_page) else redirect(url_for('home'))
         else:flash('Login Unsuccessful. Please check username and password', 'danger')
 
-    return render_template('sign_in.html', title='Login', form=form)
+    return render_template('sign_in.html', user='Customer', form=form)
 
 @app.route("/login/bank", methods=['GET', 'POST'])
 def bank_login():
@@ -90,7 +101,7 @@ def bank_login():
             return redirect(url_for('bank_home'))
         else:flash('Login Unsuccessful. Please check username and password', 'danger')
 
-    return render_template('bank_sign_in.html', title='Login', form=form)
+    return render_template('bank_sign_in.html', user='Bank', form=form)
     
 @app.route("/login/company", methods=['GET', 'POST'])
 def company_login():
@@ -108,12 +119,16 @@ def company_login():
             return redirect(url_for('company_home'))
         else:flash('Login Unsuccessful. Please check username and password', 'danger')
 
-    return render_template('company_sign_in.html', title=' Corporate Login', form=form)
+    return render_template('company_sign_in.html', user='Corporate', form=form)
 
 @app.route("/logout")
 def logout():
     logout_user()
-    return redirect(url_for('home'))
+    try:
+        os.remove("static/css/myqr.png")
+    except:
+        pass
+    return redirect(url_for('hello'))
 
 @app.route("/account")
 @login_required
@@ -146,6 +161,32 @@ def debit():
             flash('Please check your account number and PIN code', 'danger')
     return render_template('debit.html', title='Debit', form=form, bank_detail=list(curr_user_bank_detail.values()))
 
+@app.route("/debit/<path:filename>")
+@login_required
+def qr_debit(filename):
+    pattern = re.compile("^ACC-\d{3}$")
+    if pattern.match(filename) and Does_user_exist(filename):
+        form = DebitForm()
+        curr_user_bank_detail=request_User_bank_detail(current_user.id)
+
+        if form.validate_on_submit():
+            if filename!=current_user.account_no and int(form.Pin.data)==current_user.PIN:
+                if int(form.Amount.data)<current_user.balance:
+                    if Does_user_exist(filename):
+                        amount=float(form.Amount.data)
+                        make_transaction(current_user.account_no,filename,amount)
+                        flash('Trasaction successful', 'success')
+                        return redirect(url_for('home'))
+                    else:
+                        flash('Please enter valid Account number','danger')
+                else:
+                    flash('Amount Cannot be more than balance','danger')
+            else :
+                flash('Please check your account number and PIN code', 'danger')
+        return render_template('debit_dynamic.html', title='Debit', form=form,sender=filename ,bank_detail=list(curr_user_bank_detail.values()))
+    else:
+        return render_template('404.html',message='User with this account number not exist')
+
 @app.route("/summary")
 @login_required
 def summary():
@@ -166,18 +207,62 @@ def summary():
 @login_required
 def loan_enquire():
     form = Loan_enquiryForm()
-    if form.validate_on_submit():
-        loan_data,emi_data=enquire_loan(form.loan_type.data,form.principal.data,form.max_period.data)
-        if loan_data!=False:
-            return render_template('loan_enquire_result.html', title='Loan Enquiry', loan_data=loan_data, emi_data=emi_data,loop=range(len(loan_data)) , loan_type=form.loan_type.data, principal=int(form.principal.data))
-        else:
-            flash('No Loan available for your requirement','success')
-    return render_template('loan_enquire.html', title='Loan Enquiry', form=form) 
+    delete_all_row()
+    if request.method=='POST':
+        if 'Apply for loan ID' in request.form['submit']:
+            apply_loan(current_user.id,request.form['submit'][18:])
+            flash('Your application is successfully submit to bank','success')
+            return redirect(url_for('home'))
+        if 'Search' in request.form['submit']:
+            principal = form.principal.data
+            max_period = form.max_period.data
+            loan_data,emi_data=enquire_loan(form.loan_type.data,form.principal.data,form.max_period.data,current_user.bank_id)
+            if loan_data!=False:
+                insert_data_into_temporary_table(loan_data,form.principal.data,form.max_period.data)
+                return render_template('loan_enquire.html', title='Loan Enquiry',enquire=False ,loan_data=loan_data, emi_data=emi_data,loop=range(len(loan_data)) , loan_type=form.loan_type.data, principal=int(form.principal.data), form=form)
+            else:
+                flash('No Loan available for your requirement','success')
+
+    return render_template('loan_enquire.html', title='Loan Enquiry', form=form, request=True, enquire=True) 
+    
+@app.route("/loan", methods=['GET', 'POST'])
+@login_required
+def current_loans():
+    data=current_loan(current_user.id)
+    if request.method=='POST':
+        form=Pay_EMI()
+        if 'Pay EMI' in request.form['submit']:
+            data=current_loan(current_user.id)
+            for loan in data:
+                if loan['application_id']==int(request.form['submit'][8:]):
+                    emi = loan['principal']/loan['max_period']
+                    if emi<current_user.balance:
+                        return render_template('loans.html',payemi=False,loan=loan,form=form,title='Pay EMI',emi=emi)
+                    else: 
+                        flash('sufficient balance not available','danger')
+                        return redirect(url_for('home'))
+        if '_Pay_' in request.form['submit']:
+            if int(form.Pin.data)!=int(current_user.PIN):
+                flash('Incorrect PIN was entered','danger')
+                return redirect(url_for('home'))
+            else:
+                pay_emi_current_loan(current_user.id,request.form['submit'][6:],current_user.account_no,current_user.bank_id)
+                flash('Emi paid sucessfully','success')
+                return redirect(url_for('home'))
+    if len(data)>0:
+        for loans in data:
+            if loans['Status']=='ACCEPTED':
+                loans['Status']=True
+        return render_template('loans.html',payemi=True,data=data,manydata=True, title='Current Loan')
+    else: return render_template('loans.html',payemi=True,manydata=False, title='Current Loan')
 
 @app.route("/bank/home")
 @login_required
 def bank_home():
-    return render_template('bank_home.html', title='Bank_home', total_customer=len(request_customerlist(current_user.bank_id,0,'customer_id')), pending_loan=len(search_loan_application('PENDING',current_user.bank_id)))
+    loans_customer=search_loan_application('PENDING',current_user.bank_id)
+    if loans_customer!=-1:pending_length=len(loans_customer)
+    else: pending_length=0
+    return render_template('bank_home.html', title='Bank home', total_customer=len(request_customerlist(current_user.bank_id,0,'customer_id')), pending_loan=pending_length)
 
 @app.route("/bank/customer", methods=['GET', 'POST'])
 @login_required
@@ -216,24 +301,34 @@ def add_loan():
 def clear_loan():   
     applications = search_loan_application('PENDING',current_user.bank_id)
     if request.method=='POST':
+        if 'Accept' in request.form['submit'] or 'Reject' in request.form['submit']:
+            if 'Accept' in request.form['submit']:
+                accept_loan(request.form['submit'][7:])
+                flash('Loan application accepted','success')
+                return redirect(url_for('bank_home'))
+            else:
+                reject_loan(request.form['submit'][7:])
+                flash('Loan application rejected','success')
+                return redirect(url_for('bank_home'))
         customer_list=request_customer_detail((request.form['submit']))
-        print(customer_list)
         summary =  request_User_summary(customer_list['customer_id'])
         statements = []
         for entry in summary:
             statements.append(list(entry.values()))
-        return render_template('customer_detail.html', customer_list=customer_list, summary=statements) 
+        return render_template('customer_detail.html',show_cust=True, customer_list=customer_list, summary=statements, loan_application_number=request.form['submit']) 
     else:
         if type(applications)==int:
-            return render_template('bank_loan_applications.html', hasdata=False)
+            return render_template('customer_detail.html', show_cust=False, hasdata=False)
         else:
-            return render_template('bank_loan_applications.html', hasdata=True, current_loan=applications)
+            return render_template('customer_detail.html', show_cust=False, hasdata=True, current_loan=applications)
 
 @app.route("/corporate/home", methods=['GET', 'POST'])
+@login_required
 def company_home():
     return render_template('company_home.html',title='Home')
 
-@app.route("/corporate/banks", methods=['GET', 'POST'])
+@app.route("/banks/comparision", methods=['GET', 'POST'])
+@login_required
 def banks_performance():
     data =  bank_recc(0)
     form = BankPrefForm()
@@ -243,9 +338,10 @@ def banks_performance():
     for entry in data:
         statements.append(list(entry.values()))
     data=statements
-    return render_template('Bank_performance.html', form=form, data=data)
+    return render_template('Bank_performance.html', form=form, data=data, title='Bank Performance')
 
 @app.route("/corporate/stock", methods=['GET', 'POST'])
+@login_required
 def stock_comparision():
     data = load_market_data('pe_ratio')
     form = StockForm()
@@ -255,9 +351,10 @@ def stock_comparision():
     for entry in data:
         statements.append(list(entry.values()))
     data=statements
-    return render_template('stock_performance.html', form=form, data=data)
+    return render_template('stock_performance.html', form=form, data=data, title='Stocks')
 
 @app.route("/corporate/perform", methods=['GET', 'POST'])
+@login_required
 def company_performance():
     data0 = (('NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA'),)
     data = (('NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA'),)
@@ -269,9 +366,10 @@ def company_performance():
         data = best_company()
         data1 =  better_company(form.id.data)
         data2 =  rev_by_category()
-    return render_template('corporate_performance.html', form=form, data=data, data1=data1, data2 = data2, data0=data0)
+    return render_template('corporate_performance.html', form=form, data=data, data1=data1, data2 = data2, data0=data0, title='Performance')
 
 @app.route("/coporate/mnc/pay", methods=['GET', 'POST'])
+@login_required
 def mnc_pay():
     data = (('NA','NA','NA','NA','NA','NA','NA'),)
     data1 = (('NA','NA','NA','NA','NA','NA','NA','NA'),)
@@ -284,6 +382,7 @@ def mnc_pay():
     return render_template('mnc_payment.html', form=form, data=data, data1=data1, data2 = data2, title='MNC Payment')
 
 @app.route("/coporate/payment", methods=['GET', 'POST'])
+@login_required
 def corporate_payment():
     form = PaymentForm()
     if form.validate_on_submit():
@@ -295,12 +394,17 @@ def corporate_payment():
     return render_template('corporate_payment.html', form=form, title='Corporate payments')
 
 @app.route("/corporate/ekart", methods=['GET', 'POST'])
+@login_required
 def ekart():
     data = load_products(0)
     form = EKartForm()
     if form.validate_on_submit():
         data =load_products(form.radio.data)
-    return render_template('corporate_ekart.html', form=form, data=data)
+    return render_template('corporate_ekart.html', form=form, data=data, title='Ekart')
+
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template('404.html'),404
 
 if __name__ == '__main__':
     app.run(debug=True)

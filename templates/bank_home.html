@@ -4,7 +4,7 @@
     {% if message %}
     <p>{{ message }}</p>
     {% endif %}
-
+<div class="container">
     <div class="page-header m-5 p-2 round bg-light round_border light_shadow">
         <h1>{{current_user.name}}</h1>
         <h1>ID : {{current_user.bank_id}} </h1>
@@ -32,6 +32,5 @@
           </div>
         </div>
       </div>
-
-    
+</div>    
 {% endblock content %}

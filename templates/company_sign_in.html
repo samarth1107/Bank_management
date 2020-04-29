@@ -1,6 +1,6 @@
-{% extends "layout.html" %}
+{% extends "sign_in_layout.html" %}
 {% block content %}
-    <div class="content-section">
+    <div class="content-section" data-aos="zoom-in" data-aos-delay="300">
         <form method="POST" action="" class="light_shadow bg-light m-2 p-2 rounded">
             {{ form.hidden_tag() }}
             <fieldset class="form-group">
@@ -51,7 +51,7 @@
         </form>
     </div>
 
-    <div class="border-top pt-3">
+    <div class="border-top pt-3" data-aos="zoom-in" data-aos-delay="300">
         <small class="text-muted">
             Need An Account? <a class="ml-2" href="#">Sign Up Now</a>
         </small>

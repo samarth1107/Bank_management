@@ -1,12 +1,12 @@
-{% extends "layout.html" %}
+{% extends "layout_copy.html" %}
 {% block content %}
 
-<div class="content-section">
+<div class="container">
 
     <div class='row'>
-        <div class='col-md-12 m-1 round_border bg-light'>
+        <div class='col-md-12 m-2 bg-white rounded border border-dark' data-aos="zoom-in" data-aos-delay="100">
             <div class="p-2">         
-                <h4>Bank Details</h4>
+                <h4>Your Bank Details</h4>
                 <p>Bank ID : {{bank_detail[0]}}</p>
                 <p>Bank Name : {{bank_detail[1]}}</p>
                 <p>Account Number : {{bank_detail[2]}}</p>
@@ -15,9 +15,9 @@
         </div>
     </div>
 
-    <form method="POST" action="" class="round_border bg-light p-2 m-1">
+    <form method="POST" action="" class="rounded border border-dark bg-white p-4 m-1" data-aos="zoom-in" data-aos-delay="150">
         {{ form.hidden_tag() }}
-        <fieldset class="form-group">
+        <fieldset class="form-group p-2">
             <legend class="border-bottom mb-4">Transfer Money</legend>
             
             <div class="form-group">
@@ -65,15 +65,10 @@
         </fieldset>
 
         <div class="form-group">
-            {{ form.submit(class="btn btn-outline-info") }}
+            {{ form.submit(class="btn btn_primary") }}
         </div>
 
     </form>
 </div>
 
-    <div class="border-top pt-3">
-        <small class="text-muted">
-            Your money is in safe hand
-        </small>
-    </div>
 {% endblock content %}

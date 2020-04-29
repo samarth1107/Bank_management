@@ -1,0 +1,87 @@
+{% extends "layout_copy.html" %}
+{% block content %}
+
+{% if payemi %}
+<div class="container">
+{% if manydata %}
+    {% for loan in data %}
+    <div class="row my-2" data-aos="zoom-in" data-aos-delay="100">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+          <div class="card light_shadow">
+            <div class="card-body">
+              {% if loan['Status'] %}
+              <h5 class="card-title">Application number : {{loan['application_id']}}</h5>
+              <p class="card-text">For total ammount : {{loan['principal']}}</p>
+              <p class="card-text">For period : {{loan['max_period']}}</p>
+              <p class="card-text">For interest : {{loan['interest']}}</p>
+              <p class="card-text">For : {{loan['loan_type']}}</p>
+              <p class="card-text">Cuurent status : Accepted</p>
+              <p class="card-text">EMI paid : {{loan['emi_paid']}}</p>
+              <p class="card-text">Loan started on : {{loan['start_time']}}</p>
+              <form method="POST" action="">
+                    <input class="btn btn-primary" id="submit" name="submit" type="submit" value="Pay EMI {{loan['application_id']}}">
+              </form>
+              {% else %}
+              <h5 class="card-title">Application number : {{loan['application_id']}}</h5>
+              <p class="card-text">For principal ammount : {{loan['principal']}}</p>
+              <p class="card-text">For period : {{loan['max_period']}}</p>
+              <p class="card-text">For interest : {{loan['interest']}}</p>
+              <p class="card-text">For : {{loan['loan_type']}}</p>
+              <p class="card-text">Cuurent status : {{loan['Status']}}</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3"></div>
+      </div>
+    {% endfor %}
+
+{% else %}
+<div class="page-header">
+    <h1>No loan found matching with your records</h1>
+</div>
+
+{% endif %}
+</div>
+
+{% else %}
+
+<div class="container">
+  <div class="row my-2" data-aos="zoom-in" data-aos-delay="100">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+      <div class="card light_shadow">
+        <div class="card-body">
+          <h5 class="card-title">Pay EMI for Application number : {{loan['application_id']}}</h5>
+          <h5 class="card-title">EMI : {{emi}}</h5>
+          <form method="POST" action="">
+            {{ form.hidden_tag()}}
+                <fieldset class="form-group">
+                  <legend class="border-bottom mb-4">To pay emi enter your account PIN</legend>
+                  <div class="form-group">
+                    {{ form.Pin.label(class="form-control-label") }}
+                    {% if form.Pin.errors %}
+                        {{ form.Pin(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.Pin.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.Pin(class="form-control form-control-lg") }}
+                    {% endif %}
+                  </div>
+                </fieldset>
+                <input class="btn btn-primary" id="submit" name="submit" type="submit" value="_Pay_ {{loan['application_id']}}">
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3"></div>
+  </div>
+</div>
+
+{% endif %}
+    
+{% endblock content %}

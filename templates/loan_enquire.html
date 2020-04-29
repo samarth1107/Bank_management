@@ -1,7 +1,9 @@
-{% extends "layout.html" %}
+{% extends "layout_copy.html" %}
 {% block content %}
 
-<div class="content-section">
+{% if enquire %}
+<div class="container">
+
 
     <form method="POST" action="" class="round_border bg-light p-3">
         {{ form.hidden_tag() }}
@@ -53,10 +55,61 @@
         </fieldset>
 
         <div class="form-group">
-            {{ form.submit(class="btn btn-outline-info") }}
+            <input class="btn btn-outline-info" id="submit" name="submit" type="submit" value="Search">
         </div>
 
     </form>
+
+    <!-- {% if current_request %}
+    <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title text-center">Loan ID {{loan['Loan_id']}}</h5>
+                  <p class="card-text">Principal : {{loan['principal']}}</p>     
+                </div>
+              </div>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+    {% else %}
+    {% endif %} -->
 </div>
+
+{% else %}
+<div class="container">
+
+    <div class="page-header text-center m-2 p-2 border">
+        <h1>Enquiry for {{loan_type}} loan</h1>
+    </div>
+
+    <form method="POST" action="">
+    {%for row in loop%}
+    <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6 d-flex align-items-stretch bg-white border border-dark m-4 p-4">
+            <div class="icon-box" data-aos="zoom-in" data-aos-delay="100">
+                <input class="btn" id="submit" name="submit" type="submit" value="Apply for loan ID {{loan_data[row][0]}}">
+                <p class="card-text">
+                    From bank  : {{loan_data[row][1]}}<br>
+                    Interest   : {{loan_data[row][3]}}%<br>
+                    Max Period : {{loan_data[row][4]}} months
+                </p>
+                <p class="card-text">
+                    Principal : {{principal}} rupees<br>
+                    Interest : {{emi_data[row][0]}} rupees<br>
+                    Total Amount : {{emi_data[row][1]}} rupees<br>
+                    EMI : {{emi_data[row][2]}} rupees per month
+                </p>
+            </div>   
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+    {% endfor %}
+    </form>
+</div>
+
+{% endif %}
 
 {% endblock content %}

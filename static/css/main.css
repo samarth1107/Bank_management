@@ -41,6 +41,10 @@ body {
   border-right: 2px solid black;
 }
 
+.img-circle {
+  border-radius: 50%;
+}
+
 .inside {
   width: 100%;
   height: 100%;

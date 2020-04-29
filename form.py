@@ -92,3 +92,6 @@ class PaymentForm(FlaskForm):
 class EKartForm(FlaskForm):
     radio = RadioField('Filters', choices=[('Food','Food'),('Fashion','Fashion'),('Fitness','Fitness'),('Gadgets','Gadgets'),('Best Sellers','Best Sellers'),('Lowest Prices','Lowest Prices')])
     submit = SubmitField('Find the right item!')
+
+class Pay_EMI(FlaskForm):
+    Pin = StringField('Pin Number', validators=[Length(min=4, max=4)])
