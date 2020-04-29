@@ -1,4 +1,4 @@
-from Main import mysql,app
+from main import mysql,app
 from flask_login import UserMixin
 import itertools
 from datetime import datetime
