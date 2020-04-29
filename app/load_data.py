@@ -7,7 +7,7 @@ from datetime import datetime
 class User(UserMixin):
 
     def __repr__(self):
-        return f"User('{self.id}', '{self.email}', '{self.password}', '{self.name}', '{self.bank_id}','{self.account_no}', '{self.balance}', '{self.PIN}')"
+        return f"User('{self.id}', '{self.email}', '{self.password}', '{self.name}', '{self.bank_id}','{self.account_no}', '{self.balance}', '{self.PIN}', '{self.loan}', '{self.paid}')"
 
     def __init__(self, id):
         user_data,bank_detail,employee_detail = request_User_detail(id)
@@ -18,6 +18,8 @@ class User(UserMixin):
         self.account_no = bank_detail['account_no']
         self.balance = bank_detail['account_balance']
         self.PIN = bank_detail['account_pin']
+        self.loan = 0
+        self.paid = 0
 
 #This is for bank class
 class Bank(UserMixin):

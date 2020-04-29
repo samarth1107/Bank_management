@@ -105,6 +105,9 @@ def home():
         for loans in data:
             if loans['Status']=='ACCEPTED':
                 loans['Status']=True
+                current_user.loan = 1
+                if datetime.now().day>25:
+                    current_user.paid = True
     return render_template('home.html',title="Home page",loan=len(data))
 
 @app.route("/about")
@@ -315,6 +318,12 @@ def current_loans():
                 loans['Status']=True
         return render_template('loans.html',payemi=True,data=data,manydata=True, title='Current Loan')
     else: return render_template('loans.html',payemi=True,manydata=False, title='Current Loan')
+
+@app.route("/loan_remainder", methods=['GET', 'POST'])
+@login_required
+def emi_remainder():
+    current_user.paid=False
+    return redirect(url_for('current_loans'))
 
 @app.route("/bank/home")
 @login_required

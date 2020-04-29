@@ -104,15 +104,17 @@
         </div>          
       </p>
 
+      {% if current_user.paid %}
       <p class="content-section">
       <div class="card bg-dark text-light">
         <div class="card-body" data-aos="zoom-in" data-aos-delay="100">
           <h5 class="card-title">Pay your loan emi</h5>
           <p class="card-text">Pay your EMI regularly to avoid fine charges</p>
-          <a href="{{url_for('debit')}}" class="btn btn-primary mx-auto my-2">Make Payment</a>
+          <a href="{{url_for('emi_remainder')}}" class="btn btn-primary mx-auto my-2">Pay Emi</a>
         </div>
       </div> 
       </p> 
+      {% endif %}
 
       <div class="icon-box" data-aos="zoom-in" data-aos-delay="300">
         <img src="../static/css/Logo.jpeg" height="200"class="mx-auto img-circle">
