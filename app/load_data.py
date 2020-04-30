@@ -500,11 +500,11 @@ def add_amount(id,amount,radio):
         mysql.connection.commit()
         cur.close()
     return True
-
+    
 def load_products(value):
-    if value=='Food':
+    if value=='Books':
         cur = mysql.connection.cursor()
-        cur.execute("SELECT seller_id, product_id,product_name,category,price FROM bank.products WHERE category=%s",['Food'])
+        cur.execute("SELECT seller_id, product_id,product_name,category,price FROM bank.products WHERE category=%s",['Books'])
         data = cur.fetchall()
         mysql.connection.commit()
         cur.close()
@@ -514,15 +514,15 @@ def load_products(value):
         data = cur.fetchall()
         mysql.connection.commit()
         cur.close()
-    elif value == 'Fitness':
+    elif value == 'Health':
         cur = mysql.connection.cursor()
-        cur.execute("SELECT seller_id, product_id,product_name,category,price FROM bank.products WHERE category=%s",['Fitness'])
+        cur.execute("SELECT seller_id, product_id,product_name,category,price FROM bank.products WHERE category=%s",['Health'])
         data = cur.fetchall()
         mysql.connection.commit()
         cur.close()
-    elif value == 'Gadgets':
+    elif value == 'Electronics':
         cur = mysql.connection.cursor()
-        cur.execute("SELECT seller_id, product_id,product_name,category,price FROM bank.products WHERE category=%s",['Gadgets'])
+        cur.execute("SELECT seller_id, product_id,product_name,category,price FROM bank.products WHERE category=%s",['Electronics'])
         data = cur.fetchall()
         mysql.connection.commit()
         cur.close()
@@ -538,6 +538,12 @@ def load_products(value):
         data = cur.fetchall()
         mysql.connection.commit()
         cur.close()
+    elif value == 'graph':
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT distinct(seller_id), product_id,product_name,category,(price*sold) as revenue FROM products order by seller_id")
+        data = cur.fetchall()
+        mysql.connection.commit()
+        cur.close() 
     else:
         cur = mysql.connection.cursor()
         cur.execute("SELECT seller_id, product_id,product_name,category,price FROM bank.products order by price")
