@@ -107,7 +107,7 @@ def home():
                 loans['Status']=True
                 current_user.loan = 1
                 if datetime.now().day>25:
-                    current_user.paid = True
+                    current_user.paid=True
     return render_template('home.html',title="Home page",loan=len(data))
 
 @app.route("/about")
@@ -224,28 +224,29 @@ def debit():
             flash('Please check your account number and PIN code', 'danger')
     return render_template('debit.html', title='Debit', form=form, bank_detail=list(curr_user_bank_detail.values()))
 
-@app.route("/debit/<path:filename>")
+@app.route("/debit/<path:filename>", methods=['GET', 'POST'])
 @login_required
 def qr_debit(filename):
+    form = DebitForm()
+    if request.method=='POST':
+        if filename!=current_user.account_no and int(form.Pin.data)==current_user.PIN:
+            if int(form.Amount.data)<current_user.balance:
+                if Does_user_exist(filename):
+                    amount=float(form.Amount.data)
+                    make_transaction(current_user.account_no,filename,amount)
+                    flash('Trasaction successful', 'success')
+                    return redirect(url_for('home'))
+                else:
+                    flash('Please enter valid Account number','danger')
+            else:
+                flash('Amount Cannot be more than balance','danger')
+        else :
+            flash('Please check your account number and PIN code', 'danger')
+    if current_user.account_no in filename:
+        return render_template('404.html',message='You cannot send money to yourself')
     pattern = re.compile("^ACC-\d{3}$")
     if pattern.match(filename) and Does_user_exist(filename):
-        form = DebitForm()
         curr_user_bank_detail=request_User_bank_detail(current_user.id)
-
-        if form.validate_on_submit():
-            if filename!=current_user.account_no and int(form.Pin.data)==current_user.PIN:
-                if int(form.Amount.data)<current_user.balance:
-                    if Does_user_exist(filename):
-                        amount=float(form.Amount.data)
-                        make_transaction(current_user.account_no,filename,amount)
-                        flash('Trasaction successful', 'success')
-                        return redirect(url_for('home'))
-                    else:
-                        flash('Please enter valid Account number','danger')
-                else:
-                    flash('Amount Cannot be more than balance','danger')
-            else :
-                flash('Please check your account number and PIN code', 'danger')
         return render_template('debit_dynamic.html', title='Debit', form=form,sender=filename ,bank_detail=list(curr_user_bank_detail.values()))
     else:
         return render_template('404.html',message='User with this account number not exist')
@@ -322,7 +323,6 @@ def current_loans():
 @app.route("/loan_remainder", methods=['GET', 'POST'])
 @login_required
 def emi_remainder():
-    current_user.paid=False
     return redirect(url_for('current_loans'))
 
 @app.route("/bank/home")
