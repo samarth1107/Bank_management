@@ -1,0 +1,161 @@
+{% extends "layout_bank.html" %}
+{% block content %}
+
+<div class="container-fluid">
+    <div class="row m-2">
+        <div class="container round_border">
+        <form method="POST" action="" class="bg-light m-2 p-2 rounded">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Search Customer</legend>
+                
+                <div class="form-group">
+                    {{ form.query_type.label(class="form-control-label") }}
+                    {% if form.query_type.errors %}
+                        {{ form.query_type(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.query_type.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.query_type(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.query.label(class="form-control-label") }}
+                    {% if form.query.errors %}
+                        {{ form.query(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.query.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.query(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+
+            </fieldset>
+
+            <div class="form-group">
+                {{ form.submit(class="btn btn-outline-info") }}
+            </div>
+
+        </form>
+        </div>
+    </div>
+
+    <div class="row">
+        {% if record%}
+        <div class="container-fluid border border-dark m-2 bg-light">                
+
+            {% if many_recored %}
+                    <div class="row round_border">
+                        <div class="col-md-2 text-center py-3"><h4>Customer ID</h4></div>
+                        <div class="col-md-2 text-center py-3 vl"><h4>Name</h4></div>
+                        <div class="col-md-3 text-center py-3 vl"><h4>Email ID</h4></div>
+                        <div class="col-md-1 text-center py-3 vl"><h4>Account Number</h4></div>
+                        <div class="col-md-2 text-center py-3 vl"><h4>Account Balance</h4></div>
+                        <div class="col-md-2 text-center py-3 vl"><h4>Account type</h4></div>
+                    </div>
+                {% for customer in customer_list %}
+                        <div class="row border" data-aos="zoom-in" data-aos-delay="50">
+                            <div class="col-md-2 text-center inside"><p>{{customer['customer_id']}}</p></div>
+                            <div class="col-md-2 text-center inside vl"><p>{{customer['name']}}</p></div>
+                            <div class="col-md-3 text-left inside trimText vl"><p>{{customer['email']}}</p></div>
+                            <div class="col-md-1 text-center inside vl"><p>{{customer['account_no']}}</p></div>
+                            <div class="col-md-2 text-center inside vl"><p>{{customer['account_balance']}}</p></div>
+                            <div class="col-md-2 text-center inside vl"><p>{{customer['account_type']}}</p></div>
+                        </div>
+                {% endfor %}
+
+            {% else %}
+                    <div class="row m-4">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-6 border border-dark rounded text-left inside" data-aos="zoom-in" data-aos-delay="50">
+                            <p>ID : {{customer_list['customer_id']}}</p>
+                            <p>Name : {{customer_list['name']}}</p>
+                            <p>Age/Gender : {{customer_list['age']}} / {{customer_list['gender']}}</p>
+                            <p>DOB : {{customer_list['dob']}}</p>
+                            <p>Account Login Email : {{customer_list['email']}}</p>
+                            <p>Account Login password : {{customer_list['password']}}</p>
+                            <p>Account ID : {{customer_list['bank_id']}}</p>
+                            <p>Account Number : {{customer_list['account_no']}}</p>
+                            <p>Account Balance : {{customer_list['account_balance']}}</p>
+                            <p>Account type : {{customer_list['account_type']}}</p>
+                            <p>Account PIN : {{customer_list['account_pin']}}</p>
+                            <p>Address :- </p>
+                            <p>{{customer_list['house_no']}} </p>
+                            <p>{{customer_list['sector']}}</p>
+                            <p>{{customer_list['city']}}</p>
+                            <p>{{customer_list['state']}} {{customer_list['pin_code']}}</p>
+                        </div>
+                        <div class="col-md-3"></div>
+                    </div>
+
+
+                    <div class="row m-2"><h1>Customer transaction statement</h1></div>
+
+                    <div class="row m-1 border bg-light rounded" data-aos="zoom-in" data-aos-delay="50">
+                        <div class="col-md-1  text-center py-3 border border-dark rounded">
+                            <h4>S.</h4>
+                        </div>
+                        <div class="col-md-1  text-center py-3 pl-1 border border-dark rounded">
+                            <h4>D/C</h4>
+                        </div>
+                        <div class="col-md-2  text-center py-3 border border-dark rounded">
+                            <h4>Source</h4>
+                        </div>    
+                        <div class="col-md-2  text-center py-3 border border-dark rounded">
+                            <h4>Amount</h4>
+                        </div> 
+                        <div class="col-md-2  text-center py-3 border border-dark rounded">
+                            <h4>Date</h4>
+                        </div> 
+                        <div class="col-md-2  text-center py-3 border border-dark rounded">
+                            <h4>Time</h4>
+                        </div> 
+                        <div class="col-md-2  text-center py-3 border border-dark rounded">
+                            <h4>Balance</h4>
+                        </div>         
+                    </div>
+            
+                    {%for each_statement in summary%}
+                        <div class="row m-1 border bg-white" data-aos="zoom-in" data-aos-delay="50">
+                            <div class="col-md-1  text-center py-3  ">
+                                <p>{{each_statement[1]}}</p>
+                            </div>
+                            <div class="col-md-1  text-center py-3 pl-1  ">
+                                <p>{{each_statement[2]}}</p>
+                            </div>
+                            <div class="col-md-2  text-center py-3  ">
+                                <p>{{each_statement[3]}}</p>
+                            </div>    
+                            <div class="col-md-2  text-center py-3  ">
+                                <p>{{each_statement[4]}}</p>
+                            </div> 
+                            <div class="col-md-2  text-center py-3  ">
+                                <p>{{each_statement[5]}}</p>
+                            </div> 
+                            <div class="col-md-2  text-center py-3  ">
+                                <p>{{each_statement[6]}}</p>
+                            </div> 
+                            <div class="col-md-2  text-center py-3  ">
+                                <p>{{each_statement[7]}}</p>
+                            </div>         
+                        </div>
+                    {% endfor %}
+            {% endif %}
+
+        </div>
+        {% else %}
+        <div class="col-12 round_border">
+            No Record found
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock content %}

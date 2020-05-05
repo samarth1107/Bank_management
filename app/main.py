@@ -391,6 +391,13 @@ def clear_loan():
         else:
             return render_template('customer_detail.html', show_cust=False, hasdata=True, current_loan=applications)
 
+# @app.route("/bank/loan/customer", methods=['GET', 'POST'])
+# @login_required
+# def current_loan_takers():
+#     form = Search_customer()
+#     customer_list = customers_loan_list(current_user.bank_id)
+#     return render_template('customer_loan_list.html', title='Current customer list', customer_list = customer_list, form = form, many_record=True)
+
 @app.route("/corporate/home", methods=['GET', 'POST'])
 @login_required
 def company_home():

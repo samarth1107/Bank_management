@@ -273,7 +273,6 @@ def reject_loan(application_id):
     mysql.connection.commit()
     cur.close()
     return True
-   
 
 def request_customerlist(bankid, term, column):
     cur = mysql.connection.cursor()
@@ -294,6 +293,13 @@ def request_customerlist(bankid, term, column):
         customerlist=cur.fetchall()
         cur.close()
         return customerlist
+
+def customers_loan_list(bankid):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT s.customer_id,s.name,s.email,s.house_no,s.sector,s.city,s.city,s.state,s.pin_code,s.age,s.gender,s.dob,m.bank_id,m.account_no,m.account_balance,m.account_type,m.account_pin,d.password,l.application_id,l.Loan_id,l.start_time,l.emi_paid,l.Status FROM customer_personal_detail s LEFT JOIN customer_bank_details m ON s.customer_id = m.customer_id LEFT JOIN customer_login_detail d ON d.customer_id = m.customer_id LEFT JOIN loan_application_data l ON l.Customer_id = m.customer_id WHERE m.bank_id=%s AND l.status='ACCEPTED';",[str(bankid)])
+    customerlist=cur.fetchall()
+    cur.close()
+    return customerlist
 
 def current_loan_in_database(bank_id, loan_type):
     cur = mysql.connection.cursor()

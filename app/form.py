@@ -18,7 +18,6 @@ class RegisterForm(FlaskForm):
     mother = StringField('Mothers Name', validators=[DataRequired(), Length(min=3, max=20)])
     submit = SubmitField('Register')
 
-
 class LoginForm(FlaskForm):
     email = StringField('Email',validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
