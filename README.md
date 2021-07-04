@@ -1,25 +1,31 @@
-**Monergise**
+# Monergize <img src="https://github.com/samarth1107/Bank_management/blob/master/app/static/css/Logo.jpeg" align="right" width="100">    
+
+
 The capital management system which will deal with management and transfer of digital currency and has the following stakeholders. 
 This unique database management application can solve the problems of several categories of organisations at once. This system is a unified capital management system, one source for all kinds of financial services. 
 Our Web-Application provides a centralized control to the government on all the Customers, Banks and Businesses.
 
-*Home page*
+## Home page
 ![](screenshots/Home_page.png)    
 
-*Customer (Citizem) home page*
+## Customer (Citizem) home page
 ![](screenshots/Customer.png)    
 
-*Bank customer Home page*
+## Bank customer Home page
 ![](screenshots/Bank.png)    
 
-*Company home page*
+## Company home page
 ![](screenshots/Company.png)
 
-
-[You can check our weekly progress](Work in progress.pdf)
-[You can check schema of DBMS of this project](Database Schema - Entity Relationship Diagram (UML Notation).png)
-
-
+## Links
+[You can check our weekly progress](https://github.com/samarth1107/Bank_management/blob/master/Work%20in%20progress.pdf)    
+[You can check schema of DBMS of this project](https://github.com/samarth1107/Bank_management/blob/master/Database%20Schema%20-%20%20Entity%20Relationship%20Diagram%20(UML%20Notation).png)
+    
+    
+        
+        
+        
+## How to run        
 This is optimised for windows 10
 
 To setup MySQL database (for MySQL workbench) 
